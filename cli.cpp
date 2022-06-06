@@ -49,7 +49,7 @@ vector<string> get_args(vector<string> cmd)
 	string full_arg = "";
 
 	bool in_quote = false;
-	
+
 	// jump index 0 because it's a command
 	for (int o = 1; o < cmd.size(); o++)
 	{

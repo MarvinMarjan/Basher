@@ -5,7 +5,7 @@
 
 std::string get_local_dir()
 {
-	char buf[1024];
+	char buf[2048];
 
-	return _getcwd(buf, 1024);
+	return _getcwd(buf, 2048);
 }
