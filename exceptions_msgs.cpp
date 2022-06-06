@@ -32,5 +32,5 @@ void EXCP::_path_not_found(string path, map<string, string> clr)
 {
 	cout << clr["RED"] << "ERROR: " << clr["STD"] << "the path: "
 		<< clr["GREEN"] << '\"' << path << '\"' << clr["STD"] 
-		<< " doesn't couldn't be found" << endl << endl;
+		<< " couldn't be found" << endl << endl;
 }

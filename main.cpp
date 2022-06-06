@@ -56,6 +56,9 @@ int main(int argc, char *argv[])
 		// if if there is no command: a empty string: ""
 		if (cmd[0] == "__NULL__" && cmd.size() <= 1) { continue; }
 
+		// clear the console data
+		else if (cmd[0] == "clear") { system("cls"); }
+
 		// cd command
 		else if (cmd[0] == "cd") // join in a directory
 		{
@@ -78,6 +81,7 @@ int main(int argc, char *argv[])
 			{
 				// back a directory
 				if (args[0] == ".") { cd.cd_b_dir(); }
+				else if (args[0] == "/") { cd.cd_rt_dir(); }
 
 				else 
 				{

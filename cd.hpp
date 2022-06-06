@@ -7,6 +7,8 @@ public:
 	void cd_b_dir();
 	void cd_rt_dir();
 
+	std::string format_path(std::string path);
+
 	int get_max_args();
 
 	bool path_exist(std::string path);

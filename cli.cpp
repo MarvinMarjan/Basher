@@ -65,8 +65,10 @@ vector<string> get_args(vector<string> cmd)
 
 			}
 
-			full_arg[0] = NULL;
-			full_arg[full_arg.size() - ((full_arg[full_arg.size() - 1] == '\"') ? 1 : 2)] = NULL;
+			full_arg.erase(0, 1);
+			full_arg.erase(full_arg.size() - 1);
+			
+			//full_arg[full_arg.size() - ((full_arg[full_arg.size() - 1] == '\"') ? 1 : 2)] = (char*)"";
 
 			args.push_back(full_arg);
 			continue;
