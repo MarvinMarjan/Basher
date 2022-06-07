@@ -4,19 +4,17 @@
 #include <dirent.h>
 #include <map>
 #include <fstream>
+#include <direct.h>
 
 #include "dir.hpp"
+#include "path.hpp"
 
 using namespace std;
 
 DIRS::DIRS()
 {
     this->max_args = 0;
-}
-
-int DIRS::get_max_args()
-{
-    return this->max_args;
+    this->max_M_DIR_args = 1;
 }
 
 vector<vector<string>> DIRS::get_dir_list(string path)
@@ -45,4 +43,19 @@ string DIRS::get_buf_type(string path)
 
     if (!buf) { return "DIRS"; }
     else { return "FILE"; }
+}
+
+void DIRS::m_dir(string d_name)
+{
+    mkdir(d_name.c_str());
+}
+
+int DIRS::get_max_args()
+{
+    return this->max_args;
+}
+
+int DIRS::get_max_M_DIR_args()
+{
+    return this->max_M_DIR_args;
 }

@@ -75,9 +75,8 @@ vector<string> get_args(vector<string> cmd)
 		}
 
 		else //if (cmd[o][cmd[o].size() - 1] != '\"')
-		{
 			args.push_back(cmd[o]);
-		}
+		
 	}
 
 	return args;

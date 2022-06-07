@@ -64,7 +64,8 @@ bool CD::path_exist(string path)
 
 	int stat = _mkdir(aux_path.c_str());
 
-	auto _trash = _rmdir(aux_path.c_str()); // delete the directory
+	// only a _trash
+	auto _trash = _rmdir(aux_path.c_str());
 
 	if (stat == 0) { return false; } // stat == 0 because the folder could be created, then it does not exist
 	else if (stat == -1) { return true; } // stat == -1 because the folder couldn't be created, then it exist
