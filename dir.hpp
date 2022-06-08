@@ -12,12 +12,19 @@ public:
 
 	// creates a directory
 	void m_dir(std::string d_name);
+
+	//removes a directory
+	void rm_dir(std::string d_name);
 	
 	// return max_args
 	int get_max_args();
+
 	int get_max_M_DIR_args();
+	int get_max_RM_DIR_args();
 
 private:
 	int max_args;
+
 	int max_M_DIR_args;
+	int max_RM_DIR_args;
 };

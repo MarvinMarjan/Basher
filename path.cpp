@@ -1,5 +1,7 @@
+// c++ modules
 #include <string>
 
+// program modules
 #include "path.hpp"
 
 using namespace std;
@@ -17,4 +19,9 @@ string PATH::get_path()
 void PATH::set_path(string path)
 {
 	this->path = path;
+}
+
+void PATH::operator=(string path)
+{
+	this->set_path(path);
 }

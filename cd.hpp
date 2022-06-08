@@ -3,6 +3,7 @@ class CD
 public:
 	// CD constructor
 	CD(std::string path);
+	CD();
 
 	// enter a directory
 	void cd_dir(std::string);
@@ -12,6 +13,8 @@ public:
 
 	// goes to root directory: "C:/"
 	void cd_rt_dir();
+
+	void operator=(std::string path);
 
 	// returns a formated path
 	std::string format_path(std::string path);

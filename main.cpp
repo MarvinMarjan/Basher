@@ -1,16 +1,18 @@
-// g++ modules
+// c++ modules
 #include <iostream>
 #include <direct.h>
-#include <map>
 #include <csignal>
+#include <vector>
+#include <map>
 
 // program modules
-#include "cli.hpp"
-#include "local_dir.hpp"
-#include "cd.hpp"
 #include "exceptions_msgs.hpp"
-#include "dir.hpp"
+#include "local_dir.hpp"
+#include "file.hpp"
 #include "path.hpp"
+#include "cli.hpp"
+#include "dir.hpp"
+#include "cd.hpp"
 
 using namespace std;
 
@@ -53,16 +55,17 @@ int main(int argc, char *argv[])
 {
 	signal(SIGINT, signal_handling);
 
-	PATH path = { get_local_dir() }; // PATH instantiation: path object handling
-	CD cd = { path.get_path() }; // CD instantiation: path text handling (path text: "C:\")
+	PATH path = get_local_dir(); // PATH instantiation: path object handling
+	CD cd = path.get_path(); // CD instantiation: path text handling (path text: "C:\")
 	EXCP excp; // EXCP instantiation: contains the exceptions stuff
 	DIRS dirs; // DIRS instantiation: directory handling
+	FILE_HAND file;
 
 	while (true)
 	{
 		// path update
 		path.set_path(cd.get_path());
-
+		
 		// path text
 		cout << path.get_path() << clr["GREEN"] << " $ " << clr["STD"];
 
@@ -70,10 +73,12 @@ int main(int argc, char *argv[])
 		vector<string> cmd = get_command();
 
 		// if if there is no command: a empty string: ""
-		if (cmd[0] == "__NULL__" && cmd.size() <= 1) { continue; }
+		if (cmd[0] == "__NULL__" && cmd.size() <= 1) 
+			continue;
 
 		// clear the console data
-		else if (cmd[0] == "clear") { system("cls"); }
+		else if (cmd[0] == "clear") 
+			system("cls");
 
 		// cd command
 		else if (cmd[0] == "cd") // join in a directory
@@ -92,22 +97,22 @@ int main(int argc, char *argv[])
 			else
 			{
 				// back a directory
-				if (args[0] == ".") { cd.cd_b_dir(); }
+				if (args[0] == ".") 
+					cd.cd_b_dir();
 
 				// root directory: C:/
-				else if (args[0] == "/") { cd.cd_rt_dir(); }
+				else if (args[0] == "/") 
+					cd.cd_rt_dir();
 
 				else 
 				{
 					// if the specified path exists
-					if (cd.path_exist(args[0]))
-					{
-						// cd "path"
-						cd.cd_dir(args[0]);
-					}
+					if (cd.path_exist(args[0])) 
+						cd.cd_dir(args[0]); // cd "path"
 
 					// if path doesn't exists
-					else { excp._path_not_found(args[0], clr); }
+					else 
+						excp._path_not_found(args[0], clr);
 				}
 			}
 		}
@@ -128,11 +133,14 @@ int main(int argc, char *argv[])
 				// a vector containing the bufs (files or directorys) [ [0]: buf_name, [1]: buf_type (FILE | DIRS) ]
 				vector<vector<string>> dir_list = dirs.get_dir_list(path.get_path()); 
 
+				/*
+				dir_list = [
+					[ BUF_NAME, BUF_TYPE ], 
+					[ BUF_NAME, BUF_TYPE ]
+				]
+				*/
 				for (int i = 0; i < dir_list.size(); i++)
-				{
-					// [ BUF_TYPE ]  BUF_NAME
 					cout << clr["GREEN"] << "[ " << dir_list[i][1] << " ]  " << clr["STD"] << dir_list[i][0] << endl;
-				}
 			}
 		}
 
@@ -149,8 +157,91 @@ int main(int argc, char *argv[])
 			
 
 			else
-				dirs.m_dir(args[0]);
+				dirs.m_dir(cd.format_path(path.get_path()) + args[0]);
+		}
+
+		else if (cmd[0] == "rmdir")
+		{
+			vector<string> args = get_args(cmd);
+
+			if (args.size() > dirs.get_max_RM_DIR_args())
+				excp._max_args_overload(cmd[0], args.size(), "== 1", clr);
+
+			else if (args.size() < dirs.get_max_RM_DIR_args())
+				excp._isfct_args(args.size(), "== 1", clr);
+
+			else
+				dirs.rm_dir(args[0]);
+		}
+
+		else if (cmd[0] == "mfile")
+		{
+			vector<string> args = get_args(cmd);
+
+			if (args.size() > file.get_M_FILE_max_args())
+				excp._max_args_overload(cmd[0], args.size(), "== 1", clr);
+
+			else if (args.size() < file.get_M_FILE_max_args())
+				excp._isfct_args(args.size(), "== 1", clr);
 			
+			else
+				file.m_file(cd.format_path(path.get_path()) + args[0]);
+		}
+
+		else if (cmd[0] == "rmfile")
+		{
+			vector<string> args = get_args(cmd);
+			
+			if (args.size() > file.get_RM_FILE_max_args())
+				excp._max_args_overload(cmd[0], args.size(), "== 1", clr);
+
+			else if (args.size() < file.get_RM_FILE_max_args())
+				excp._isfct_args(args.size(), "== 1", clr);
+
+			else
+				file.rm_file(args[0]);
+		}
+
+		else if (cmd[0] == "read")
+		{
+			vector<string> args = get_args(cmd);
+
+			if (args.size() > file.get_READ_FILE_max_args())
+				excp._max_args_overload(cmd[0], args.size(), "== 1", clr);
+
+			else if (args.size() < file.get_READ_FILE_max_args())
+				excp._isfct_args(args.size(), "== 1", clr);
+
+			else
+			{
+				cout << clr["GREEN"] << '\"' << args[0] << '\"' << clr["STD"] << " content:" << endl << endl;
+
+				vector<string> buffer = file.read_file(cd.format_path(path.get_path()) + args[0]);
+
+				for (int i = 0; i < buffer.size(); i++)
+					cout << buffer[i] << endl;
+			}
+		}
+
+		else if (cmd[0] == "write")
+		{
+			vector<string> args = get_args(cmd);
+
+			if (args.size() > file.get_WRITE_FILE_max_args())
+				excp._max_args_overload(cmd[0], args.size(), "== 2", clr);
+
+			else if (args.size() < file.get_WRITE_FILE_max_args())
+				excp._isfct_args(args.size(), "== 2", clr);
+			
+			else
+				file.write_file(cd.format_path(path.get_path()) + args[0], args[1]);
+		}
+
+		else if (cmd[0] == "sys")
+		{
+			vector<string> args = get_args(cmd);
+
+			system(args[0].c_str());
 		}
 
 		// quit the program
@@ -163,8 +254,6 @@ int main(int argc, char *argv[])
 
 		// if the command doesn't exists
 		else
-		{
 			excp._cmd_not_found(cmd[0], clr);
-		}
 	}
 }

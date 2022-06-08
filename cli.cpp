@@ -1,5 +1,9 @@
-﻿#include <iostream>
+﻿// c++ modules
+#include <iostream>
+#include <vector>
+#include <string>
 
+//program modules
 #include "cli.hpp"
 
 using namespace std;
@@ -27,18 +31,14 @@ vector<string> split_string(string str)
 			i++;
 
 			if (i >= str.size())
-			{
 				break;
-			}
 		}
 
 		split_str.push_back(aux_str);
 	}
 
 	if (split_str.size() < 1)
-	{
 		split_str.push_back("__NULL__");
-	}
 
 	return split_str;
 }
@@ -59,9 +59,11 @@ vector<string> get_args(vector<string> cmd)
 			{
 				full_arg += cmd[i] + ((i == cmd.size() - 1) ? "" : " ");
 
-				if (cmd[i][cmd[i].size() - 1] == '\"') { break; }
+				if (cmd[i][cmd[i].size() - 1] == '\"') 
+					break;
 
-				else { o++; }
+				else 
+					o++;
 
 			}
 

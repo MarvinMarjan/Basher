@@ -1,10 +1,12 @@
+// c++ modules
 #include <fstream>
 #include <direct.h>
 #include <string>
 #include <iostream>
 #include <cstring>
 
-#include "./cd.hpp"
+// program modules
+#include "cd.hpp"
 
 using namespace std;
 
@@ -13,11 +15,19 @@ CD::CD(string path)
 	for (int i = 0; i < path.size(); i++)
 	{
 		if (path[i] == '\\')
-		{
 			path[i] = '/';
-		}
-
+		
 		this->path = this->format_path(path);
+		this->max_args = 1;
+	}
+}
+
+CD::CD()
+{
+	for (int i = 0; i < path.size(); i++)
+	{
+		if (path[i] == '\\')
+			path[i] = '/';
 
 		this->max_args = 1;
 	}
@@ -46,11 +56,18 @@ void CD::cd_rt_dir()
 	this->path = "C:/";
 }
 
+void CD::operator=(string path)
+{
+
+}
+
 string CD::format_path(string path)
 {
-	if (this->path[this->path.size() - 1] == '/') { return path; }
+	if (this->path[this->path.size() - 1] == '/')
+		return path;
 
-	else { return path + "/"; }
+	else 
+		return path + "/";
 }
 
 int CD::get_max_args()
@@ -67,8 +84,11 @@ bool CD::path_exist(string path)
 	// only a _trash
 	auto _trash = _rmdir(aux_path.c_str());
 
-	if (stat == 0) { return false; } // stat == 0 because the folder could be created, then it does not exist
-	else if (stat == -1) { return true; } // stat == -1 because the folder couldn't be created, then it exist
+	if (stat == 0) // stat == 0 because the folder could be created, then it does not exist
+		return false; 
+
+	else if (stat == -1) // stat == -1 because the folder couldn't be created, then it exist
+		return true; 
 }
 
 string CD::get_path()
