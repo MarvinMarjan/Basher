@@ -6,3 +6,5 @@ std::vector<std::string> get_command();
 
 // returns all arguments of a command
 std::vector<std::string> get_args(std::vector<std::string> cmd);
+
+std::vector<std::string> get_program_args(char* argv[], int argc);

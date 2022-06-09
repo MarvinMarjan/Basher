@@ -4,6 +4,7 @@
 #include <fstream>
 
 #include "file.hpp"
+#include "cli.hpp"
 
 using namespace std;
 
@@ -47,6 +48,41 @@ vector<string> FILE_HAND::read_file(string path)
 		buffer.erase(buffer.begin());
 
 	return buffer;
+}
+
+string FILE_HAND::read_file_line(string path, int line)
+{
+	string buffer;
+
+	fstream file;
+	file.open(path, ios::in);
+
+	for (int i = 1; i <= line; i++)
+		getline(file, buffer);
+	
+	return buffer;
+}
+
+vector<string> FILE_HAND::get_rf_commands(string path, int iterator)
+{
+	return split_string(this->read_file_line(path, iterator));
+}
+
+int FILE_HAND::get_file_lines(string path)
+{
+	string buffer;
+	int lines = 0;
+
+	fstream file;
+	file.open(path, ios::in);
+
+	while (!file.eof())
+	{
+		lines++;
+		getline(file, buffer);
+	}
+
+	return lines;
 }
 
 void FILE_HAND::write_file(string path, string content)

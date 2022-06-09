@@ -8,6 +8,7 @@
 // program modules
 #include "exceptions_msgs.hpp"
 #include "local_dir.hpp"
+#include "boot.hpp"
 #include "file.hpp"
 #include "path.hpp"
 #include "cli.hpp"
@@ -53,24 +54,48 @@ void signal_handling(int signum)
 // main process
 int main(int argc, char *argv[])
 {
-	signal(SIGINT, signal_handling);
+	BOOT boot; // BOOT instantiation: takes care of startup processes
 
-	PATH path = get_local_dir(); // PATH instantiation: path object handling
+	vector<string> program_args = get_program_args(argv, argc); // contain the program args
+	
+	bool read_file_mode = boot.is_rf_mode(program_args);
+
+	int iterator = ((read_file_mode) ? 0 : -1);
+
+	PATH path = ((read_file_mode) ? "C:/" : get_local_dir()); // PATH instantiation: path object handling
 	CD cd = path.get_path(); // CD instantiation: path text handling (path text: "C:\")
 	EXCP excp; // EXCP instantiation: contains the exceptions stuff
 	DIRS dirs; // DIRS instantiation: directory handling
-	FILE_HAND file;
+	FILE_HAND file; // FILE instantiation: file system handling
+
+	signal(SIGINT, signal_handling);
 
 	while (true)
 	{
+		if (read_file_mode)
+			iterator++; // line
+
 		// path update
-		path.set_path(cd.get_path());
+		path = cd.get_path();
 		
 		// path text
 		cout << path.get_path() << clr["GREEN"] << " $ " << clr["STD"];
 
 		// contains the std::input of user, but splited in a array
-		vector<string> cmd = get_command();
+		vector<string> cmd = ((read_file_mode) ? file.get_rf_commands(program_args[2], iterator) : get_command());
+
+		// if current line > max lines of file
+		if (read_file_mode)
+			if (iterator > file.get_file_lines(program_args[2]))
+				break;
+
+		if (read_file_mode)
+		{
+			for (string i : cmd) // prints the command
+				cout << i << " ";
+			
+			cout << endl;
+		}
 
 		// if if there is no command: a empty string: ""
 		if (cmd[0] == "__NULL__" && cmd.size() <= 1) 

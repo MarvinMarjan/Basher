@@ -11,6 +11,9 @@ public:
 	
 	// reads a file and return it's content
 	std::vector<std::string> read_file(std::string path); 
+	std::string read_file_line(std::string path, int line);
+	std::vector<std::string> get_rf_commands(std::string path, int iterator);
+	int get_file_lines(std::string path);
 
 	// writes text in a file
 	void write_file(std::string path, std::string content); 
@@ -26,8 +29,6 @@ public:
 
 	// return the max args of write_file
 	int get_WRITE_FILE_max_args();
-
-	
 
 private:
 	int max_M_FILE_args;

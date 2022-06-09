@@ -7,6 +7,7 @@
 
 // program modules
 #include "cd.hpp"
+#include "path.hpp"
 
 using namespace std;
 
@@ -36,7 +37,12 @@ CD::CD()
 void CD::cd_dir(string path)
 {
 	this->path = this->format_path(this->path);
-	this->path += path;
+	
+	if (PATH::is_absoulute_path(path))
+		this->path = this->format_path(path);
+
+	else
+		this->path += this->format_path(path);
 }
 
 void CD::cd_b_dir()

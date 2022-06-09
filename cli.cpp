@@ -83,3 +83,13 @@ vector<string> get_args(vector<string> cmd)
 
 	return args;
 }
+
+vector<string> get_program_args(char* argv[], int argc)
+{
+	vector<string> args;
+
+	for (int i = 0; i < argc; i++)
+		args.push_back((string)argv[i]);
+	
+	return args;
+}
