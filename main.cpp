@@ -57,8 +57,19 @@ int main(int argc, char *argv[])
 	BOOT boot; // BOOT instantiation: takes care of startup processes
 
 	vector<string> program_args = get_program_args(argv, argc); // contain the program args
+
+	// stoped here ----: transforme program_args em um map<> para facilitar a passagem de argumentos e modos
 	
 	bool read_file_mode = boot.is_rf_mode(program_args);
+	bool no_clr_mode = boot.disable_color(program_args);
+
+	if (no_clr_mode)
+		clr = {
+			{"STD", ""},
+			{"RED", ""},
+			{"GREEN", ""},
+			{"YELLOW", ""}
+		};
 
 	int iterator = ((read_file_mode) ? 0 : -1);
 
