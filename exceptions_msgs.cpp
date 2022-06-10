@@ -1,6 +1,7 @@
 // c++ modules
 #include <iostream>
 #include <string>
+#include <vector>
 #include <map>
 
 // program modules
@@ -35,4 +36,14 @@ void EXCP::_path_not_found(string path, map<string, string> clr)
 	cout << clr["RED"] << "ERROR: " << clr["STD"] << "the path: "
 		<< clr["GREEN"] << '\"' << path << '\"' << clr["STD"] 
 		<< " couldn't be found" << endl << endl;
+}
+
+void EXCP::_incompatible_flags(vector<string> imcomp_flags, map<string, string> clr)
+{
+	cout << clr["RED"] << "ERROR: " << clr["STD"] << "the flags: ";
+	
+	for (int i = 0; i < imcomp_flags.size(); i++)
+		cout << clr["GREEN"] << '\"' << imcomp_flags[i] << '\"' << ((i + 1 == imcomp_flags.size()) ? clr["STD"] : clr["STD"] + ", ");
+	
+	cout << " are imcompatible." << endl;
 }

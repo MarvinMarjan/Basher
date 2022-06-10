@@ -8,3 +8,4 @@ std::vector<std::string> get_command();
 std::vector<std::string> get_args(std::vector<std::string> cmd);
 
 std::vector<std::string> get_program_args(char* argv[], int argc);
+std::vector<std::string> get_program_flags(char* argv[], int argc);

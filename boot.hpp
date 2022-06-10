@@ -1,6 +1,5 @@
 class BOOT
 {
 public:
-	bool is_rf_mode(std::vector<std::string> program_args);
-	bool disable_color(std::vector<std::string> program_args);
+	std::map<std::string, bool> set_program_modes(std::vector<std::string> flags);
 };

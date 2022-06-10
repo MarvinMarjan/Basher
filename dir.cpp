@@ -17,6 +17,7 @@ DIRS::DIRS()
 {
     this->max_args = 0;
     this->max_M_DIR_args = 1;
+    this->max_RM_DIR_args = 1;
 }
 
 vector<vector<string>> DIRS::get_dir_list(string path)

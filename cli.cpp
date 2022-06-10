@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <map>
 
 //program modules
 #include "cli.hpp"
@@ -88,8 +89,20 @@ vector<string> get_program_args(char* argv[], int argc)
 {
 	vector<string> args;
 
-	for (int i = 0; i < argc; i++)
-		args.push_back((string)argv[i]);
+	for (int i = 0; i < argc; i++)	
+		args.push_back(argv[i]);
 	
 	return args;
 }
+
+vector<string> get_program_flags(char* argv[], int argc)
+{
+	vector<string> flags;
+
+	for (int i = 0; i < argc; i++)
+		if (argv[i][0] == '-')
+			flags.push_back(argv[i]);
+		
+	return flags;
+}
+

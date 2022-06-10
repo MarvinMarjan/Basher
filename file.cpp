@@ -63,11 +63,6 @@ string FILE_HAND::read_file_line(string path, int line)
 	return buffer;
 }
 
-vector<string> FILE_HAND::get_rf_commands(string path, int iterator)
-{
-	return split_string(this->read_file_line(path, iterator));
-}
-
 int FILE_HAND::get_file_lines(string path)
 {
 	string buffer;

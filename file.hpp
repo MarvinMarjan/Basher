@@ -12,7 +12,7 @@ public:
 	// reads a file and return it's content
 	std::vector<std::string> read_file(std::string path); 
 	std::string read_file_line(std::string path, int line);
-	std::vector<std::string> get_rf_commands(std::string path, int iterator);
+	//std::string get_inline_commands(std::vector<std::string> targ_array)
 	int get_file_lines(std::string path);
 
 	// writes text in a file

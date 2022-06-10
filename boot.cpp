@@ -1,5 +1,7 @@
 #include <string>
 #include <vector>
+#include <map>
+#include <iostream>
 
 #include "file.hpp"
 #include "boot.hpp"
@@ -7,20 +9,25 @@
 
 using namespace std;
 
-bool BOOT::is_rf_mode(vector<string> program_args)
+map<string, bool> BOOT::set_program_modes(vector<string> flags)
 {
-	if (program_args.size() > 1 && program_args[1] == "-rf") // read file mode
-		return true;
+	map<string, bool> modes = {
+		{"read_file_mode", false},
+		{"no_clr_mode", false},
+		{"inline_cmd_mode", false}
+	};
 
-	else
-		return false;
-}
+	for (int i = 0; i < flags.size(); i++)
+	{
+		if (flags[i] == "-rf")
+			modes["read_file_mode"] = true;
 
-bool BOOT::disable_color(vector<string> program_args)
-{
-	if (program_args.size() > 1 && (program_args[1] == "-dc" || (program_args.size() > 2 && program_args[2] == "-dc")))
-		return true;
+		else if (flags[i] == "-dc")
+			modes["no_clr_mode"] = true;
 
-	else
-		return false;
+		else if (flags[i] == "-c")
+			modes["inline_cmd_mode"] = true;
+	}
+
+	return modes;
 }
