@@ -8,6 +8,7 @@
 
 // program modules
 #include "exceptions_msgs.hpp"
+#include "flags_arg.hpp"
 #include "local_dir.hpp"
 #include "utilities.hpp"
 #include "flags.hpp"
@@ -58,11 +59,12 @@ void signal_handling(int signum)
 // main process
 int main(int argc, char *argv[])
 {
-	UTILS utils;
+	UTILS utils; // some util stuff
 	BOOT boot; // BOOT instantiation: takes care of startup processes
 
 	vector<string> program_args = get_program_args(argv, argc); // contain the program args
 	vector<string> flags_array = get_program_flags(argv, argc); // return the boot program args: exmaple: basher [-dc || -rf]
+
 	map<string, bool> modes = boot.set_program_modes(flags_array);
 	
 	bool read_file_mode = modes["read_file_mode"];
@@ -77,18 +79,18 @@ int main(int argc, char *argv[])
 			{"YELLOW", ""}
 		};
 
-	int iterator = ((read_file_mode) ? 0 : -1);
-	int rf_index = ((read_file_mode) ? utils.find_item(program_args, "-rf") : -1);
-
-	int inline_cmd_index = ((inline_cmd_mode) ? utils.find_item(program_args, "-c") : -1);
 
 	PATH path = ((read_file_mode) ? "C:/" : get_local_dir()); // PATH instantiation: path object handling
 	CD cd = path.get_path(); // CD instantiation: path text handling (path text: "C:\")
 	EXCP excp; // EXCP instantiation: contains the exceptions stuff
 	DIRS dirs; // DIRS instantiation: directory handling
 	FILE_HAND file; // FILE instantiation: file system handling
-	FUNC func;
-	FLAGS flags;
+	FUNC func; // FUNC instantiation: in-program-app handling
+
+	FLAG_ARG flags_args; // FLAG_ARG instantiation: program flags handling
+
+	FLAGS::READ_FILE_FLAG rf_flag( ((read_file_mode) ? true : false), 0, utils.find_item(program_args, "-rf") + 1);
+	FLAGS::INLINE_COMMAND_FLAG inline_cmd_flag(((inline_cmd_mode) ? true : false), program_args, -1);
 
 	signal(SIGINT, signal_handling);
 
@@ -96,12 +98,15 @@ int main(int argc, char *argv[])
 	{
 		if (read_file_mode && inline_cmd_mode)
 		{
-			excp._incompatible_flags(vector<string>({ "-rf", "-c" }), clr);
+			excp._incompatible_flags({ "-rf", "-c" }, clr);
 			break;
 		}
 
 		if (read_file_mode)
-			iterator++; // line
+			rf_flag.iterator++; // line
+
+		if (inline_cmd_mode)
+			inline_cmd_flag.current++;
 
 		// path update
 		path = cd.get_path();
@@ -109,22 +114,28 @@ int main(int argc, char *argv[])
 		// path text
 		cout << path.get_path() << clr["GREEN"] << " $ " << clr["STD"];
 
+		for (vector<string> arr : inline_cmd_flag.cmds)
+			for (string i : arr)
+				cout << "arr: " << i << endl;
+
 		// contains the std::input of user, but splited in a array
-		vector<string> cmd = ((read_file_mode) ? flags.get_rf_commands(program_args[rf_index + 1], iterator) :
-			(inline_cmd_mode) ? split_string(program_args[inline_cmd_index + 1]) : get_command());
+		vector<string> cmd = ((read_file_mode) ? flags_args.get_rf_commands(program_args[rf_flag.rf_index + 1], rf_flag.iterator) :
+							  (inline_cmd_mode) ? inline_cmd_flag.cmds[inline_cmd_flag.current] : get_command());
+
+		for (string i : cmd)
+			cout << "i: " << i << endl;
 
 		if (inline_cmd_mode)
 		{
 			for (string i : cmd)
-				cout << i;
+				cout << i << " ";
 
 			cout << endl;
 		}
-		
 
 		// if current line > max lines of file
 		if (read_file_mode)
-			if (iterator > file.get_file_lines(program_args[rf_index + 1]))
+			if (rf_flag.iterator > file.get_file_lines(program_args[rf_flag.rf_index + 1]))
 				break;
 
 		if (read_file_mode)
@@ -355,5 +366,9 @@ int main(int argc, char *argv[])
 		// if the command doesn't exists
 		else
 			excp._cmd_not_found(cmd[0], clr);
+
+		if (inline_cmd_mode)
+			if (inline_cmd_flag.current + 1 >= inline_cmd_flag.count)
+				break;
 	}
 }

@@ -2,24 +2,27 @@
 #include <vector>
 
 #include "flags.hpp"
-#include "file.hpp"
-#include "cli.hpp"
+#include "flags_arg.hpp"
 
 using namespace std;
 
-FLAGS::FLAGS()
+FLAGS::READ_FILE_FLAG::READ_FILE_FLAG(bool active, int iterator, int rf_index)
 {
-
+	if (active)
+	{
+		this->iterator = iterator;
+		this->rf_index = rf_index;
+	}
 }
 
-vector<string> FLAGS::get_rf_commands(string path, int iterator)
+FLAGS::INLINE_COMMAND_FLAG::INLINE_COMMAND_FLAG(bool active, vector<string> program_args, int current)
 {
-	FILE_HAND file;
+	FLAG_ARG flag_arg;
 
-	return split_string(file.read_file_line(path, iterator));
+	if (active)
+	{
+		this->cmds = flag_arg.get_inline_commands(program_args);
+		this->count = this->cmds.size();
+		this->current = current;
+	}
 }
-
-/*vector<vector<string>> FLAGS::get_inline_commands(vector<string> program_args)
-{
-	// stoped here =--------
-}*/

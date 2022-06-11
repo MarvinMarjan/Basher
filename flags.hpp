@@ -1,8 +1,22 @@
-class FLAGS
+namespace FLAGS
 {
-public:
-	FLAGS();
+	class READ_FILE_FLAG
+	{
+	public:
+		READ_FILE_FLAG(bool active, int iterator, int rf_index);
 
-	std::vector<std::string> get_rf_commands(std::string path, int iterator);
-	//std::vector<std::vector<std::string>> get_inline_commands(std::vector<std::string> program_args);
-};
+		int iterator;
+		int rf_index;
+	};
+
+	class INLINE_COMMAND_FLAG
+	{
+	public:
+		INLINE_COMMAND_FLAG(bool active, std::vector<std::string> program_args, int current);
+
+		int count;
+		int current;
+
+		std::vector<std::vector<std::string>> cmds;
+	};
+}
