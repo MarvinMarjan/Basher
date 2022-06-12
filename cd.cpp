@@ -3,11 +3,13 @@
 #include <direct.h>
 #include <string>
 #include <iostream>
+#include <vector>
 #include <cstring>
 
 // program modules
 #include "cd.hpp"
 #include "path.hpp"
+#include "file.hpp"
 
 using namespace std;
 
@@ -95,6 +97,18 @@ bool CD::path_exist(string path)
 
 	else if (stat == -1) // stat == -1 because the folder couldn't be created, then it exist
 		return true; 
+}
+
+bool CD::file_exist(string path)
+{
+	fstream file;
+	file.open(path, ios::in);
+
+	if (file.fail())
+		return false;
+
+	else
+		return true;
 }
 
 string CD::get_path()

@@ -24,6 +24,7 @@ public:
 
 	// returns true if path exists
 	bool path_exist(std::string path);
+	bool file_exist(std::string path);
 
 	// return this->path
 	std::string get_path();

@@ -8,6 +8,7 @@
 
 // program modules
 #include "exceptions_msgs.hpp"
+#include "warning_msgs.hpp"
 #include "flags_arg.hpp"
 #include "local_dir.hpp"
 #include "utilities.hpp"
@@ -43,7 +44,8 @@ map<string, string> clr = {
 	{"STD", "\033[0m"},
 	{"RED", "\033[0;31m"},
 	{"GREEN", "\033[0;32m"},
-	{"YELLOW", "\033[1;33m"}
+	{"YELLOW", "\033[1;33m"},
+	{"BLUE", "\033[0;34m"}
 };
 
 // ctrl + c interrupt handling
@@ -83,6 +85,7 @@ int main(int argc, char *argv[])
 	PATH path = ((read_file_mode) ? "C:/" : get_local_dir()); // PATH instantiation: path object handling
 	CD cd = path.get_path(); // CD instantiation: path text handling (path text: "C:\")
 	EXCP excp; // EXCP instantiation: contains the exceptions stuff
+	WARN warn; // WARN instantiation: contains warning messages
 	DIRS dirs; // DIRS instantiation: directory handling
 	FILE_HAND file; // FILE instantiation: file system handling
 	FUNC func; // FUNC instantiation: in-program-app handling
@@ -114,16 +117,9 @@ int main(int argc, char *argv[])
 		// path text
 		cout << path.get_path() << clr["GREEN"] << " $ " << clr["STD"];
 
-		for (vector<string> arr : inline_cmd_flag.cmds)
-			for (string i : arr)
-				cout << "arr: " << i << endl;
-
 		// contains the std::input of user, but splited in a array
 		vector<string> cmd = ((read_file_mode) ? flags_args.get_rf_commands(program_args[rf_flag.rf_index + 1], rf_flag.iterator) :
 							  (inline_cmd_mode) ? inline_cmd_flag.cmds[inline_cmd_flag.current] : get_command());
-
-		for (string i : cmd)
-			cout << "i: " << i << endl;
 
 		if (inline_cmd_mode)
 		{
@@ -150,6 +146,11 @@ int main(int argc, char *argv[])
 		if (cmd[0] == "__NULL__" && cmd.size() <= 1) 
 			continue;
 
+		else if (cmd[0] == "help")
+		{
+			// ----- under development ;) -----
+		}
+
 		// clear the console data
 		else if (cmd[0] == "clear") 
 			system("cls");
@@ -160,12 +161,14 @@ int main(int argc, char *argv[])
 			// a vector containing all command arguments
 			vector<string> args = get_args(cmd);
 
+			int max_args = cd.get_max_args();
+
 			// if you have fewer arguments than the minimum
-			if (args.size() < cd.get_max_args())	
+			if (args.size() < max_args)
 				excp._isfct_args(args.size(), "== 1", clr); // isfct = "inssuficient"
 
 			// if if you have more arguments than the limit
-			else if (args.size() > cd.get_max_args()) 
+			else if (args.size() > max_args)
 				excp._max_args_overload(cmd[0], args.size(), "== 1", clr);
 
 			else
@@ -197,7 +200,9 @@ int main(int argc, char *argv[])
 			// a vector containing all command arguments
 			vector<string> args = get_args(cmd);
 
-			if (args.size() > dirs.get_max_args()) 
+			int max_args = dirs.get_max_args();
+
+			if (args.size() > max_args) 
 				excp._max_args_overload(cmd[0], args.size(), "== 0", clr);
 
 			else
@@ -222,78 +227,149 @@ int main(int argc, char *argv[])
 		{
 			vector<string> args = get_args(cmd);
 
-			if (args.size() > dirs.get_max_M_DIR_args())
+			int max_args = dirs.get_max_M_DIR_args();
+
+			if (args.size() > max_args)
 				excp._max_args_overload(cmd[0], args.size(), "== 1", clr);
 			
-
-			else if (args.size() < dirs.get_max_M_DIR_args())
+			else if (args.size() < max_args)
 				excp._isfct_args(args.size(), "== 1", clr);
-			
 
 			else
-				dirs.m_dir(cd.format_path(path.get_path()) + args[0]);
+			{
+				if (cd.path_exist(cd.format_path(path.get_path()) + args[0]))
+					excp._dir_already_exists(args[0], clr);
+
+				else
+					dirs.m_dir(cd.format_path(path.get_path()) + args[0]);
+			}
 		}
 
 		else if (cmd[0] == "rmdir")
 		{
 			vector<string> args = get_args(cmd);
 
-			if (args.size() > dirs.get_max_RM_DIR_args())
+			int max_args = dirs.get_max_RM_DIR_args();
+
+			if (args.size() > max_args)
 				excp._max_args_overload(cmd[0], args.size(), "== 1", clr);
 
-			else if (args.size() < dirs.get_max_RM_DIR_args())
+			else if (args.size() < max_args)
 				excp._isfct_args(args.size(), "== 1", clr);
 
 			else
-				dirs.rm_dir(cd.format_path(path.get_path()) + args[0]);
+			{
+				if (cd.path_exist(args[0]))
+					dirs.rm_dir(cd.format_path(path.get_path()) + args[0]);
+
+				else
+					excp._path_not_found(args[0], clr);
+			}
 		}
 
 		else if (cmd[0] == "mfile")
 		{
 			vector<string> args = get_args(cmd);
 
-			if (args.size() > file.get_M_FILE_max_args())
+			int max_args = file.get_M_FILE_max_args();
+
+			if (args.size() > max_args)
 				excp._max_args_overload(cmd[0], args.size(), "== 1", clr);
 
-			else if (args.size() < file.get_M_FILE_max_args())
+			else if (args.size() < max_args)
 				excp._isfct_args(args.size(), "== 1", clr);
 			
 			else
-				file.m_file(cd.format_path(path.get_path()) + args[0]);
+			{
+				if (cd.file_exist(cd.format_path(path.get_path()) + args[0]))
+				{
+					string input;
+
+					warn._file_already_exists(args[0], clr);
+					cout << "would you like to replace it? Y/N: ";
+
+					getline(cin, input);
+
+					input = utils.to_lower_case(input);
+
+					if (input == "y" || input == "yes")
+						file.m_file(cd.format_path(path.get_path()) + args[0]);
+
+					else
+					{
+						vector<vector<string>> buf_list = dirs.get_dir_list(path.get_path());
+
+						string file_i_name;
+						int file_i = 1;
+
+
+						for (int i = 0; i < buf_list.size(); i++)
+						{
+							if (buf_list[i][0] == to_string(file_i) + "_" + args[0])
+								file_i++;
+						}
+
+						file_i_name = to_string(file_i) + "_" + args[0];
+
+						file.m_file(cd.format_path(path.get_path()) + file_i_name);
+					}
+				}
+
+				else
+					file.m_file(cd.format_path(path.get_path()) + args[0]);
+			}
+
+			cout << endl;
 		}
 
 		else if (cmd[0] == "rmfile")
 		{
 			vector<string> args = get_args(cmd);
+
+			int max_args = file.get_RM_FILE_max_args();
 			
-			if (args.size() > file.get_RM_FILE_max_args())
+			if (args.size() > max_args)
 				excp._max_args_overload(cmd[0], args.size(), "== 1", clr);
 
-			else if (args.size() < file.get_RM_FILE_max_args())
+			else if (args.size() < max_args)
 				excp._isfct_args(args.size(), "== 1", clr);
 
 			else
-				file.rm_file(cd.format_path(path.get_path()) + args[0]);
+			{
+				if (cd.file_exist(cd.format_path(path.get_path()) + args[0]))
+					file.rm_file(cd.format_path(path.get_path()) + args[0]);
+
+				else
+					excp._file_not_found(args[0], clr);
+			}
 		}
 
 		else if (cmd[0] == "read")
 		{
 			vector<string> args = get_args(cmd);
 
-			if (args.size() > file.get_READ_FILE_max_args())
+			int max_args = file.get_READ_FILE_max_args();
+
+			if (args.size() > max_args)
 				excp._max_args_overload(cmd[0], args.size(), "== 1", clr);
 
-			else if (args.size() < file.get_READ_FILE_max_args())
+			else if (args.size() < max_args)
 				excp._isfct_args(args.size(), "== 1", clr);
 
 			else
 			{
-				cout << clr["GREEN"] << '\"' << args[0] << '\"' << clr["STD"] << " content:" << endl << endl;
+				if (cd.file_exist(cd.format_path(path.get_path()) + args[0]))
+				{
+					cout << clr["GREEN"] << '\"' << args[0] << '\"' << clr["STD"] << " content:" << endl << endl;
 
-				vector<string> buffer = file.read_file(cd.format_path(path.get_path()) + args[0]);
+					vector<string> buffer = file.read_file(cd.format_path(path.get_path()) + args[0]);
 
-				for (int i = 0; i < buffer.size(); i++)
-					cout << buffer[i] << endl;
+					for (int i = 0; i < buffer.size(); i++)
+						cout << buffer[i] << endl;
+				}
+
+				else
+					excp._file_not_found(args[0], clr);
 			}
 		}
 
@@ -301,14 +377,50 @@ int main(int argc, char *argv[])
 		{
 			vector<string> args = get_args(cmd);
 
-			if (args.size() > file.get_WRITE_FILE_max_args())
+			int max_args = file.get_WRITE_FILE_max_args();
+
+			if (args.size() > max_args)
 				excp._max_args_overload(cmd[0], args.size(), "== 2", clr);
 
-			else if (args.size() < file.get_WRITE_FILE_max_args())
+			else if (args.size() < max_args)
 				excp._isfct_args(args.size(), "== 2", clr);
 			
 			else
-				file.write_file(cd.format_path(path.get_path()) + args[0], args[1]);
+			{
+				if (cd.file_exist(cd.format_path(path.get_path()) + args[0]))
+					file.write_file(cd.format_path(path.get_path()) + args[0], args[1]);
+
+				else
+					excp._file_not_found(args[0], clr);
+			}
+		}
+
+		else if (cmd[0] == "copy")
+		{
+			vector<string> args = get_args(cmd);
+
+			int max_args = file.get_COPY_FILE_max_args();
+
+			if (args.size() > max_args)
+				excp._max_args_overload(cmd[0], args.size(), "== 2", clr);
+
+			else if (args.size() < max_args)
+				excp._isfct_args(args.size(), "== 2", clr);
+
+			else
+			{
+				if (cd.file_exist(cd.format_path(path.get_path()) + args[0]))
+				{
+					if (cd.path_exist(cd.format_path(args[1])))
+						file.copy_file(cd.format_path(path.get_path()) + args[0], cd.format_path(args[1]) + args[0]);
+
+					else
+						excp._path_not_found(args[1], clr);
+				}
+
+				else
+					excp._file_not_found(args[0], clr);
+			}
 		}
 
 		else if (cmd[0] == "sys")
@@ -350,8 +462,7 @@ int main(int argc, char *argv[])
 
 				} while (buffer != ".run");
 
-
-				func.repeat(stoi(args[0]), cmds);
+				func.repeat(stoi(args[0]), cmds, flags_array);
 			}
 		}
 

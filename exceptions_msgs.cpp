@@ -38,6 +38,13 @@ void EXCP::_path_not_found(string path, map<string, string> clr)
 		<< " couldn't be found" << endl << endl;
 }
 
+void EXCP::_file_not_found(string file_name, map<string, string> clr)
+{
+	cout << clr["RED"] << "ERROR: " << clr["STD"] << "the file: "
+		<< clr["GREEN"] << '\"' << file_name << '\"' << clr["STD"]
+		<< " couldn't be found" << endl << endl;
+}
+
 void EXCP::_incompatible_flags(vector<string> imcomp_flags, map<string, string> clr)
 {
 	cout << clr["RED"] << "ERROR: " << clr["STD"] << "the flags: ";
@@ -45,5 +52,11 @@ void EXCP::_incompatible_flags(vector<string> imcomp_flags, map<string, string> 
 	for (int i = 0; i < imcomp_flags.size(); i++)
 		cout << clr["GREEN"] << '\"' << imcomp_flags[i] << '\"' << ((i + 1 == imcomp_flags.size()) ? clr["STD"] : clr["STD"] + ", ");
 	
-	cout << " are imcompatible." << endl;
+	cout << " are imcompatible." << endl << endl;
+}
+
+void EXCP::_dir_already_exists(string dir_name, map<string, string> clr)
+{
+	cout << clr["RED"] << "ERROR: " << clr["STD"] << "the directory: " << clr["GREEN"]
+		<< '\"' << dir_name << '\"' << clr["STD"] << " already exists" << endl << endl;
 }

@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <iostream>
 
 #include "func.hpp"
 #include "file.hpp"
@@ -13,26 +14,29 @@ FUNC::FUNC()
 	this->repeat_max_args = 1;
 }
 
-void FUNC::repeat(int count, vector<string> cmds)
+void FUNC::repeat(int count, vector<string> cmds, vector<string> flags)
 {
 	for (int i = 0; i < count; i++)
-		this->run(cmds);
+		this->run(cmds, flags);
 }
 
-void FUNC::run(vector<string> cmds)
+void FUNC::run(vector<string> cmds, vector<string> flags)
 {
-	FILE_HAND file;
-
-	file.m_file(CACHE_PATH);
+	string aux = "\"";
 
 	for (string i : cmds)
-		file.write_file(CACHE_PATH, i);
+		aux += i + ";";
 
-	string aux = "a -rf " + (string)CACHE_PATH;
+	aux += "\"";
 
-	system(aux.c_str());
+	string buf = "a ";
 
-	file.rm_file(CACHE_PATH);
+	for (string i : flags)
+		buf += (i == "-c") ? "" : i + " ";
+
+	buf += "-c " + aux;
+
+	system(buf.c_str());
 }
 
 int FUNC::get_REPEAT_max_args()

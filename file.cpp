@@ -1,7 +1,7 @@
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <vector>
-#include <fstream>
 
 #include "file.hpp"
 #include "cli.hpp"
@@ -14,6 +14,7 @@ FILE_HAND::FILE_HAND()
 	this->max_RM_FILE_args = 1;
 	this->max_READ_FILE_args = 1;
 	this->max_WRITE_FILE_args = 2;
+	this->max_COPY_FILE_args = 2;
 }
 
 void FILE_HAND::m_file(string path)
@@ -97,6 +98,19 @@ void FILE_HAND::write_file(string path, string content)
 	file_write.close();
 }
 
+void FILE_HAND::copy_file(string file_path, string targ_path)
+{
+	vector<string> content = this->read_file(file_path);
+	string str_content = "";
+
+	for (string i : content)
+		str_content += i + "\n";
+
+	this->m_file(targ_path);
+
+	this->write_file(targ_path, str_content);
+}
+
 int FILE_HAND::get_M_FILE_max_args()
 {
 	return this->max_M_FILE_args;
@@ -115,4 +129,9 @@ int FILE_HAND::get_READ_FILE_max_args()
 int FILE_HAND::get_WRITE_FILE_max_args()
 {
 	return this->max_WRITE_FILE_args;
+}
+
+int FILE_HAND::get_COPY_FILE_max_args()
+{
+	return this->max_COPY_FILE_args;
 }
