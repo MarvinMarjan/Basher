@@ -1,3 +1,5 @@
+#pragma once
+
 class FLAG_ARG
 {
 public:

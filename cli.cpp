@@ -106,3 +106,32 @@ vector<string> get_program_flags(char* argv[], int argc)
 	return flags;
 }
 
+vector<string> get_cmd_flags(vector<string> cmd)
+{
+	vector<string> flags;
+	
+	for (string i : cmd)
+		if (i[0] == '-')
+			flags.push_back(i);
+
+	return flags;
+}
+
+map<string, bool> set_cmd_modes(vector<string> args)
+{
+	map<string, bool> modes = {
+		{"details_mode", false},
+		{"debug_path_mode", false}
+	};
+
+	for (string i : args)
+	{
+		if (i == "-d")
+			modes["details_mode"] = true;
+
+		else if (i == "-p")
+			modes["debug_path_mode"] = true;
+	}
+
+	return modes;
+}

@@ -1,3 +1,5 @@
+#pragma once
+
 namespace FLAGS
 {
 	class READ_FILE_FLAG

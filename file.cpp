@@ -1,7 +1,9 @@
 #include <iostream>
+#include <sys/stat.h>
 #include <fstream>
 #include <string>
 #include <vector>
+#include <map>
 
 #include "file.hpp"
 #include "cli.hpp"
@@ -79,6 +81,17 @@ int FILE_HAND::get_file_lines(string path)
 	}
 
 	return lines;
+}
+
+float FILE_HAND::get_file_size(string path)
+{
+	struct stat sb{};
+
+	if (!stat(path.c_str(), &sb))
+		return sb.st_size;
+
+	else
+		return -1.0;
 }
 
 void FILE_HAND::write_file(string path, string content)

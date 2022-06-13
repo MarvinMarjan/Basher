@@ -1,7 +1,9 @@
 // c++ modules
+#include <Windows.h>
 #include <iostream>
 #include <direct.h>
 #include <csignal>
+#include <iomanip>
 #include <string>
 #include <vector>
 #include <map>
@@ -45,7 +47,8 @@ map<string, string> clr = {
 	{"RED", "\033[0;31m"},
 	{"GREEN", "\033[0;32m"},
 	{"YELLOW", "\033[1;33m"},
-	{"BLUE", "\033[0;34m"}
+	{"BLUE", "\033[0;34m"},
+	{"CYAN", "\033[0;36m"}
 };
 
 // ctrl + c interrupt handling
@@ -93,7 +96,7 @@ int main(int argc, char *argv[])
 	FLAG_ARG flags_args; // FLAG_ARG instantiation: program flags handling
 
 	FLAGS::READ_FILE_FLAG rf_flag( ((read_file_mode) ? true : false), 0, utils.find_item(program_args, "-rf") + 1);
-	FLAGS::INLINE_COMMAND_FLAG inline_cmd_flag(((inline_cmd_mode) ? true : false), program_args, -1);
+	FLAGS::INLINE_COMMAND_FLAG inline_cmd_flag( ((inline_cmd_mode) ? true : false), program_args, -1);
 
 	signal(SIGINT, signal_handling);
 
@@ -203,23 +206,76 @@ int main(int argc, char *argv[])
 			int max_args = dirs.get_max_args();
 
 			if (args.size() > max_args) 
-				excp._max_args_overload(cmd[0], args.size(), "== 0", clr);
+				excp._max_args_overload(cmd[0], args.size(), "<= 2", clr);
 
 			else
 			{
 				// dir_list[i] = [ buf_name, buf_type ]
 				
 				// a vector containing the bufs (files or directorys) [ [0]: buf_name, [1]: buf_type (FILE | DIRS) ]
-				vector<vector<string>> dir_list = dirs.get_dir_list(path.get_path()); 
+
+				vector<string> cmd_flags = get_cmd_flags(args);
+				map<string, bool> cmd_modes = set_cmd_modes(cmd_flags);
+
+				vector<vector<string>> dir_list = dirs.get_dir_list(path.get_path(), cmd_modes["details_mode"], cmd_modes["debug_path_mode"]);
 
 				/*
 				dir_list = [
-					[ BUF_NAME, BUF_TYPE ], 
-					[ BUF_NAME, BUF_TYPE ]
+					[ BUF_NAME, BUF_TYPE, BUF_SIZE ?, BUF_PATH ? ], 
+					[ BUF_NAME, BUF_TYPE, BUF_SIZE ?, BUF_PATH ? ]
 				]
 				*/
+
+				if (cmd_modes["debug_path_mode"])
+				{
+					for (int i = 0; i < dir_list.size(); i++)
+						cout << clr["YELLOW"] << "analyzing: " << clr["GREEN"] << dir_list[i][3] << clr["STD"] << endl;
+
+					cout << endl;
+				}
+
 				for (int i = 0; i < dir_list.size(); i++)
-					cout << clr["GREEN"] << "[ " << dir_list[i][1] << " ]  " << clr["STD"] << dir_list[i][0] << endl;
+				{
+					if (args.size() >= 1)
+					{
+
+						if (cmd_modes["details_mode"])
+						{
+							float buf_size = stoi(dir_list[i][2]);
+
+							cout << clr["GREEN"] << "[ " << dir_list[i][1] << " ]  ";
+
+							cout << clr["CYAN"] << "[ " << setw(5);
+
+							cout << fixed;
+
+							if (buf_size == -1)
+								cout << right << "NULL";
+
+							else
+							{
+								cout.precision(1);
+								cout << right << ((buf_size < 1000)
+									? buf_size : (buf_size >= 1000 && buf_size < 1000000)
+									? buf_size / 1000 : (buf_size >= 1000000 && buf_size < 1000000000)
+									? buf_size / 1000000 : (buf_size >= 1000000000)
+									? buf_size / 1000000000 : -1);
+
+								cout << " " << ((buf_size < 1000)
+									? "BT" : (buf_size >= 1000 && buf_size < 1000000)
+									? "KB" : (buf_size >= 1000000 && buf_size < 1000000000)
+									? "MB" : (buf_size >= 1000000000)
+									? "GB" : "BIG");
+							}
+
+							cout << " ] " << clr["STD"];
+							cout << dir_list[i][0] << endl;
+						}
+					}
+
+					else
+						cout << clr["GREEN"] << "[ " << dir_list[i][1] << " ]  " << clr["STD"] << dir_list[i][0] << endl;
+				}
 			}
 		}
 
@@ -297,7 +353,7 @@ int main(int argc, char *argv[])
 
 					else
 					{
-						vector<vector<string>> buf_list = dirs.get_dir_list(path.get_path());
+						vector<vector<string>> buf_list = dirs.get_dir_list(path.get_path(), false, false);
 
 						string file_i_name;
 						int file_i = 1;

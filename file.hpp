@@ -1,3 +1,5 @@
+#pragma once
+
 class FILE_HAND
 {
 public:
@@ -15,6 +17,7 @@ public:
 	//std::string get_inline_commands(std::vector<std::string> targ_array)
 	int get_file_lines(std::string path);
 
+	float get_file_size(std::string path);
 
 	// writes text in a file
 	void write_file(std::string path, std::string content);
