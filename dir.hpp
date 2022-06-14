@@ -7,12 +7,12 @@ public:
 	DIRS();
 
 	// returns a vector containing all bufs
-	std::vector<std::vector<std::string>> get_dir_list(std::string path, bool get_size, bool debug_path);
+	std::vector<std::vector<std::string>> get_dir_list(std::string path, bool get_size, bool debug_path, std::map<std::string, std::string> clr);
 
 	// returns the buf type (FILE | DIRS)
 	std::string get_buf_type(std::string path);
 
-	float get_dir_size(std::string path);
+	float get_dir_size(std::string path, bool debug_path, std::map<std::string, std::string> clr);
 
 	// creates a directory
 	void m_dir(std::string d_name);

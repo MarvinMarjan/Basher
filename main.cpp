@@ -1,3 +1,7 @@
+// Copyright © Marvin Marjan
+
+#define _VERSION "1.0.0"
+
 // c++ modules
 #include <Windows.h>
 #include <iostream>
@@ -149,9 +153,58 @@ int main(int argc, char *argv[])
 		if (cmd[0] == "__NULL__" && cmd.size() <= 1) 
 			continue;
 
+		else if (cmd[0] == "version" || cmd[0] == "-v" || cmd[0] == "vers")
+			cout << clr["CYAN"] << "Basher: " << clr["GREEN"] << _VERSION << clr["STD"] << endl << endl;
+		
+
 		else if (cmd[0] == "help")
 		{
-			// ----- under development ;) -----
+			cout << clr["RED"] << "--> " << clr["BLUE"] << "tips: " << clr["STD"] << endl << endl;
+
+			cout << clr["YELLOW"] << "1" << clr["STD"] << " - " << "if your argument has spaces, for example: "
+				<< clr["GREEN"] << "file name.txt" << clr["STD"] << ",\n      enclose the argument in quotes:" << clr["CYAN"]
+				<< " \"" << clr["GREEN"] << "file name.txt" << clr["CYAN"] << "\"" << clr["STD"] << ", so there will be no problems" << endl << endl;
+
+			cout << clr["RED"] << "-->" << clr["BLUE"] << "commands: " << clr["STD"] << endl << endl;
+
+			cout << clr["YELLOW"] << "clear" << clr["STD"] << " - " << "clean the console" << endl 
+				<< "\t\tsyntax: " << clr["YELLOW"] << "clear" << endl << endl;
+			
+			cout << clr["YELLOW"] << "cd" << clr["STD"] << " - " << "navigate between paths" << endl
+				<< "\t\tsyntax: " << clr["YELLOW"] << "cd" << clr["CYAN"] << " [ path ]" << clr["STD"] << endl << endl;
+
+			cout << clr["YELLOW"] << "dirs" << clr["STD"] << " - " << "show all [files|directories] in the current directory" << endl
+				<< "\t\tsyntax: " << clr["YELLOW"] << "dirs" << clr["CYAN"] << " [-detail (-d) ? | -path_debug (-p) ?]" << clr["STD"] << endl << endl;
+
+			cout << clr["YELLOW"] << "mdir" << clr["STD"] << " - " << "create a directory" << endl
+				<< "\t\tsyntax: " << clr["YELLOW"] << "mdir" << clr["CYAN"] << " [ dir_name ]" << clr["STD"] << endl << endl;
+
+			cout << clr["YELLOW"] << "mdir" << clr["STD"] << " - " << "remove a directory" << endl
+				<< "\t\tsyntax: " << clr["YELLOW"] << "rmdir" << clr["CYAN"] << " [ dir_name ]" << clr["STD"] << endl << endl;
+
+			cout << clr["YELLOW"] << "mfile" << clr["STD"] << " - " << "create a file" << endl
+				<< "\t\tsyntax: " << clr["YELLOW"] << "mfile" << clr["CYAN"] << " [ file_name ]" << clr["STD"] << endl << endl;
+
+			cout << clr["YELLOW"] << "rmfile" << clr["STD"] << " - " << "remove a file" << endl
+				<< "\t\tsyntax: " << clr["YELLOW"] << "rmfile" << clr["CYAN"] << " [ file_name ]" << clr["STD"] << endl << endl;
+
+			cout << clr["YELLOW"] << "write" << clr["STD"] << " - " << "write something to a file" << endl
+				<< "\t\tsyntax: " << clr["YELLOW"] << "write" << clr["CYAN"] << " [ file_name ] [ content ]" << clr["STD"] << endl << endl;
+
+			cout << clr["YELLOW"] << "read" << clr["STD"] << " - " << "read the contents of a file" << endl
+				<< "\t\tsyntax: " << clr["YELLOW"] << "read" << clr["CYAN"] << " [ file_name ]" << clr["STD"] << endl << endl;
+
+			cout << clr["YELLOW"] << "copy" << clr["STD"] << " - " << "copy a file to another path" << endl
+				<< "\t\tsyntax: " << clr["YELLOW"] << "copy" << clr["CYAN"] << " [ file_to_copy_name ] [ target_path ]" << clr["STD"] << endl << endl;
+
+			cout << clr["YELLOW"] << "sys" << clr["STD"] << " - " << "execute an operating system command" << endl
+				<< "\t\tsyntax: " << clr["YELLOW"] << "sys" << clr["CYAN"] << " \"[ command ]\"" << clr["STD"] << endl << endl;
+
+			cout << clr["YELLOW"] << "repeat" << clr["STD"] << " - " << "repeats a block of code a number of times. (use \".run\" to run de block of code)" << endl
+				<< "\t\tsyntax: " << clr["YELLOW"] << "repeat" << clr["CYAN"] << " [ times ]" << clr["STD"] << endl << endl;
+
+			cout << clr["YELLOW"] << ".exit" << clr["STD"] << " - " << "quit the program" << endl
+				<< "\t\tsyntax: " << clr["YELLOW"] << ".exit" << clr["STD"] << endl << endl;
 		}
 
 		// clear the console data
@@ -217,7 +270,7 @@ int main(int argc, char *argv[])
 				vector<string> cmd_flags = get_cmd_flags(args);
 				map<string, bool> cmd_modes = set_cmd_modes(cmd_flags);
 
-				vector<vector<string>> dir_list = dirs.get_dir_list(path.get_path(), cmd_modes["details_mode"], cmd_modes["debug_path_mode"]);
+				vector<vector<string>> dir_list = dirs.get_dir_list(path.get_path(), cmd_modes["details_mode"], cmd_modes["debug_path_mode"], clr);
 
 				/*
 				dir_list = [
@@ -225,14 +278,6 @@ int main(int argc, char *argv[])
 					[ BUF_NAME, BUF_TYPE, BUF_SIZE ?, BUF_PATH ? ]
 				]
 				*/
-
-				if (cmd_modes["debug_path_mode"])
-				{
-					for (int i = 0; i < dir_list.size(); i++)
-						cout << clr["YELLOW"] << "analyzing: " << clr["GREEN"] << dir_list[i][3] << clr["STD"] << endl;
-
-					cout << endl;
-				}
 
 				for (int i = 0; i < dir_list.size(); i++)
 				{
@@ -353,7 +398,7 @@ int main(int argc, char *argv[])
 
 					else
 					{
-						vector<vector<string>> buf_list = dirs.get_dir_list(path.get_path(), false, false);
+						vector<vector<string>> buf_list = dirs.get_dir_list(path.get_path(), false, false, clr);
 
 						string file_i_name;
 						int file_i = 1;
