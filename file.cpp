@@ -94,14 +94,15 @@ float FILE_HAND::get_file_size(string path)
 		return -1.0;
 }
 
-void FILE_HAND::write_file(string path, string content)
+void FILE_HAND::write_file(string path, string content, bool clear)
 {
 	vector<string> buffer = read_file(path);
 
 	string str_buffer = "";
 
-	for (int i = 0; i < buffer.size(); i++)
-		str_buffer += buffer[i] + ((buffer.size() == 0) ? "" : "\n");
+	if (!clear)
+		for (int i = 0; i < buffer.size(); i++)
+			str_buffer += buffer[i] + ((buffer.size() == 0) ? "" : "\n");
 	
 	ofstream file_write;
 	file_write.open(path);
@@ -121,7 +122,7 @@ void FILE_HAND::copy_file(string file_path, string targ_path)
 
 	this->m_file(targ_path);
 
-	this->write_file(targ_path, str_content);
+	this->write_file(targ_path, str_content, false);
 }
 
 int FILE_HAND::get_M_FILE_max_args()

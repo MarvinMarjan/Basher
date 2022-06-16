@@ -1,6 +1,8 @@
 // Copyright © Marvin Marjan
 
-#define _VERSION "1.0.0"
+#define _VERSION "1.0.2"
+
+// stoped here: cara, tem muito bug no programa, resolve isso aí :)
 
 // c++ modules
 #include <Windows.h>
@@ -18,6 +20,7 @@
 #include "flags_arg.hpp"
 #include "local_dir.hpp"
 #include "utilities.hpp"
+#include "shortcut.hpp"
 #include "flags.hpp"
 #include "boot.hpp"
 #include "file.hpp"
@@ -96,6 +99,8 @@ int main(int argc, char *argv[])
 	DIRS dirs; // DIRS instantiation: directory handling
 	FILE_HAND file; // FILE instantiation: file system handling
 	FUNC func; // FUNC instantiation: in-program-app handling
+	SHORTCUT shortcut;
+	shortcut.update("read");
 
 	FLAG_ARG flags_args; // FLAG_ARG instantiation: program flags handling
 
@@ -106,6 +111,8 @@ int main(int argc, char *argv[])
 
 	while (true)
 	{
+		map<string, string> shortcut_val = shortcut.get_shortcuts();
+
 		if (read_file_mode && inline_cmd_mode)
 		{
 			excp._incompatible_flags({ "-rf", "-c" }, clr);
@@ -200,6 +207,12 @@ int main(int argc, char *argv[])
 			cout << clr["YELLOW"] << "sys" << clr["STD"] << " - " << "execute an operating system command" << endl
 				<< "\t\tsyntax: " << clr["YELLOW"] << "sys" << clr["CYAN"] << " \"[ command ]\"" << clr["STD"] << endl << endl;
 
+			cout << clr["YELLOW"] << "shortcut" << clr["STD"] << " - " << "path shortcuts. path shortcuts - use the $shortcut_name operator \nto access the value of a shortcut. Example: " << "\"cd $desktop\"" << endl
+				<< "\t\tsyntax: " << clr["YELLOW"] << "shortcut" << clr["CYAN"] << " [ add ] [ shortcut_name ] [ shortcut_path ]" << clr["STD"] << endl <<
+									 clr["YELLOW"] << "\t\t\tshortcut" << clr["CYAN"] << " [ rmv (remove) ] [ shortcut_name ]" << endl <<
+				                     clr["YELLOW"] << "\t\t\tshortcut" << clr["CYAN"] << " [ edit ] [ shortcut_name ] [ new_shortcut_path ]" << endl <<
+									 clr["YELLOW"] << "\t\t\tshortcut" << clr["CYAN"] << " [ list ] " << clr["STD"] << clr["STD"] << endl << endl;
+
 			cout << clr["YELLOW"] << "repeat" << clr["STD"] << " - " << "repeats a block of code a number of times. (use \".run\" to run de block of code)" << endl
 				<< "\t\tsyntax: " << clr["YELLOW"] << "repeat" << clr["CYAN"] << " [ times ]" << clr["STD"] << endl << endl;
 
@@ -215,7 +228,7 @@ int main(int argc, char *argv[])
 		else if (cmd[0] == "cd") // join in a directory
 		{
 			// a vector containing all command arguments
-			vector<string> args = get_args(cmd);
+			vector<string> args = get_args(cmd, shortcut_val);
 
 			int max_args = cd.get_max_args();
 
@@ -230,18 +243,18 @@ int main(int argc, char *argv[])
 			else
 			{
 				// back a directory
-				if (args[0] == ".") 
+				if (args[0] == "." || args[0] == "..")
 					cd.cd_b_dir();
 
 				// root directory: C:/
 				else if (args[0] == "/") 
 					cd.cd_rt_dir();
 
-				else 
+				else if (!PATH::is_same_path(args[0]))
 				{
 					// if the specified path exists
-					if (cd.path_exist(args[0])) 
-						cd.cd_dir(args[0]); // cd "path"
+					if (cd.path_exist(PATH::check(args[0], path.get_path()))) 
+						cd.cd_dir(PATH::check(args[0], path.get_path())); // cd [ path ]
 
 					// if path doesn't exists
 					else 
@@ -254,7 +267,7 @@ int main(int argc, char *argv[])
 		else if (cmd[0] == "dirs")
 		{
 			// a vector containing all command arguments
-			vector<string> args = get_args(cmd);
+			vector<string> args = get_args(cmd, shortcut_val);
 
 			int max_args = dirs.get_max_args();
 
@@ -326,7 +339,7 @@ int main(int argc, char *argv[])
 
 		else if (cmd[0] == "mdir")
 		{
-			vector<string> args = get_args(cmd);
+			vector<string> args = get_args(cmd, shortcut_val);
 
 			int max_args = dirs.get_max_M_DIR_args();
 
@@ -338,17 +351,17 @@ int main(int argc, char *argv[])
 
 			else
 			{
-				if (cd.path_exist(cd.format_path(path.get_path()) + args[0]))
+				if (cd.path_exist(PATH::check(args[0], path.get_path())))
 					excp._dir_already_exists(args[0], clr);
 
-				else
-					dirs.m_dir(cd.format_path(path.get_path()) + args[0]);
+				else	
+					dirs.m_dir(PATH::check(args[0], path.get_path()));
 			}
 		}
 
 		else if (cmd[0] == "rmdir")
 		{
-			vector<string> args = get_args(cmd);
+			vector<string> args = get_args(cmd, shortcut_val);
 
 			int max_args = dirs.get_max_RM_DIR_args();
 
@@ -360,8 +373,8 @@ int main(int argc, char *argv[])
 
 			else
 			{
-				if (cd.path_exist(args[0]))
-					dirs.rm_dir(cd.format_path(path.get_path()) + args[0]);
+				if (cd.path_exist(PATH::check(args[0], path.get_path())))
+					dirs.rm_dir(PATH::check(args[0], path.get_path()));
 
 				else
 					excp._path_not_found(args[0], clr);
@@ -370,7 +383,7 @@ int main(int argc, char *argv[])
 
 		else if (cmd[0] == "mfile")
 		{
-			vector<string> args = get_args(cmd);
+			vector<string> args = get_args(cmd, shortcut_val);
 
 			int max_args = file.get_M_FILE_max_args();
 
@@ -382,7 +395,7 @@ int main(int argc, char *argv[])
 			
 			else
 			{
-				if (cd.file_exist(cd.format_path(path.get_path()) + args[0]))
+				if (cd.file_exist(PATH::check(args[0], path.get_path())))
 				{
 					string input;
 
@@ -417,7 +430,7 @@ int main(int argc, char *argv[])
 				}
 
 				else
-					file.m_file(cd.format_path(path.get_path()) + args[0]);
+					file.m_file(PATH::check(args[0], path.get_path()));
 			}
 
 			cout << endl;
@@ -425,7 +438,7 @@ int main(int argc, char *argv[])
 
 		else if (cmd[0] == "rmfile")
 		{
-			vector<string> args = get_args(cmd);
+			vector<string> args = get_args(cmd, shortcut_val);
 
 			int max_args = file.get_RM_FILE_max_args();
 			
@@ -437,8 +450,8 @@ int main(int argc, char *argv[])
 
 			else
 			{
-				if (cd.file_exist(cd.format_path(path.get_path()) + args[0]))
-					file.rm_file(cd.format_path(path.get_path()) + args[0]);
+				if (cd.file_exist(PATH::check(args[0], path.get_path())))
+					file.rm_file(PATH::check(args[0], path.get_path()));
 
 				else
 					excp._file_not_found(args[0], clr);
@@ -447,7 +460,7 @@ int main(int argc, char *argv[])
 
 		else if (cmd[0] == "read")
 		{
-			vector<string> args = get_args(cmd);
+			vector<string> args = get_args(cmd, shortcut_val);
 
 			int max_args = file.get_READ_FILE_max_args();
 
@@ -459,7 +472,7 @@ int main(int argc, char *argv[])
 
 			else
 			{
-				if (cd.file_exist(cd.format_path(path.get_path()) + args[0]))
+				if (cd.file_exist(PATH::check(args[0], path.get_path())))
 				{
 					cout << clr["GREEN"] << '\"' << args[0] << '\"' << clr["STD"] << " content:" << endl << endl;
 
@@ -476,7 +489,7 @@ int main(int argc, char *argv[])
 
 		else if (cmd[0] == "write")
 		{
-			vector<string> args = get_args(cmd);
+			vector<string> args = get_args(cmd, shortcut_val);
 
 			int max_args = file.get_WRITE_FILE_max_args();
 
@@ -488,8 +501,8 @@ int main(int argc, char *argv[])
 			
 			else
 			{
-				if (cd.file_exist(cd.format_path(path.get_path()) + args[0]))
-					file.write_file(cd.format_path(path.get_path()) + args[0], args[1]);
+				if (cd.file_exist(PATH::check(args[0], path.get_path())))
+					file.write_file(PATH::check(args[0], path.get_path()), args[1], false);
 
 				else
 					excp._file_not_found(args[0], clr);
@@ -498,7 +511,7 @@ int main(int argc, char *argv[])
 
 		else if (cmd[0] == "copy")
 		{
-			vector<string> args = get_args(cmd);
+			vector<string> args = get_args(cmd, shortcut_val);
 
 			int max_args = file.get_COPY_FILE_max_args();
 
@@ -510,14 +523,15 @@ int main(int argc, char *argv[])
 
 			else
 			{
-				if (cd.file_exist(cd.format_path(path.get_path()) + args[0]))
+				if (cd.file_exist(PATH::check(args[0], path.get_path())))
 				{
-					if (cd.path_exist(cd.format_path(args[1])))
-						file.copy_file(cd.format_path(path.get_path()) + args[0], cd.format_path(args[1]) + args[0]);
+					if (cd.path_exist(PATH::check(args[1], path.get_path())))
+						file.copy_file(PATH::check(args[0], path.get_path()), cd.format_path(args[1]) + args[0]);
 
 					else
 						excp._path_not_found(args[1], clr);
 				}
+				
 
 				else
 					excp._file_not_found(args[0], clr);
@@ -526,7 +540,7 @@ int main(int argc, char *argv[])
 
 		else if (cmd[0] == "sys")
 		{
-			vector<string> args = get_args(cmd);
+			vector<string> args = get_args(cmd, shortcut_val);
 
 			if (args.size() > 1)
 				excp._max_args_overload(cmd[0], args.size(), "== 1", clr);
@@ -538,14 +552,114 @@ int main(int argc, char *argv[])
 				system(args[0].c_str());
 		}
 
+		else if (cmd[0] == "shortcut")
+		{
+			shortcut.update("read");
+			vector<string> args = get_args(cmd, shortcut_val);
+
+			int max_ADD_args = shortcut.get_max_ADD_args();
+			int max_RMV_args = shortcut.get_max_RMV_args();
+			int max_EDIT_args = shortcut.get_max_EDIT_args();
+			int max_LIST_args = shortcut.get_max_LIST_args();
+
+			if (args[0] == "add")
+			{
+				if (args.size() > max_ADD_args)
+					excp._max_args_overload(cmd[0], args.size(), "== 3", clr);
+
+				else if (args.size() < max_ADD_args)
+					excp._isfct_args(args.size(), "== 3", clr);
+
+				else
+				{
+					bool exist = shortcut.exist(args[1]);
+
+					if (exist)
+					{
+						string input;
+
+						warn._shortcut_already_exists({ args[1], shortcut.get_shortcuts()[args[1]] }, clr);
+
+						cout << "would you like to replace it? Y/N: ";
+						cin >> input;
+
+						input = utils.to_lower_case(input);
+
+						if (input == "y" || input == "yes")
+						{
+							string new_value;
+
+							getline(cin, new_value);
+
+							shortcut.edit_shortcut(args[1], new_value);
+						}
+					}
+
+					else
+						shortcut.add_shortcut({ args[1], args[2] });
+				}
+			}
+
+			else if (args[0] == "rmv")
+			{
+				if (args.size() > max_RMV_args)
+					excp._max_args_overload(cmd[0], args.size(), "== 2", clr);
+
+				else if (args.size() < max_RMV_args)
+					excp._isfct_args(args.size(), "== 2", clr);
+
+				else if (shortcut.exist(args[1]))
+					shortcut.rmv_shortcut(args[1]);
+
+				else
+					excp._shortcut_not_found(args[1], clr);
+			}
+
+			else if (args[0] == "edit")
+			{
+				if (args.size() > max_EDIT_args)
+					excp._max_args_overload(cmd[0], args.size(), "== 3", clr);
+
+				else if (args.size() < max_EDIT_args)
+					excp._isfct_args(args.size(), "== 3", clr);
+
+				else if (shortcut.exist(args[1]))
+					shortcut.edit_shortcut(args[1], args[2]);
+
+				else
+					excp._shortcut_not_found(args[1], clr);
+			}
+				
+			else if (args[0] == "list")
+			{
+				if (args.size() > max_LIST_args)
+					excp._max_args_overload(cmd[0], args.size(), "== 1", clr);
+
+				else if (args.size() < max_LIST_args)
+					excp._isfct_args(args.size(), "== 1", clr);
+
+				else
+				{
+					for (auto i : shortcut.get_shortcuts())
+						cout << clr["YELLOW"] << i.first << ": " << clr["GREEN"] << i.second << clr["STD"] << endl;
+
+					cout << endl;
+				}
+			}
+
+			shortcut.update("write");
+		}
+
 		else if (cmd[0] == "repeat")
 		{
-			vector<string> args = get_args(cmd);
+			vector<string> args = get_args(cmd, shortcut_val);
+
+			int max_args = func.get_REPEAT_max_args();
 			
-			if (args.size() > func.get_REPEAT_max_args())
+			if (args.size() > max_args)
 				excp._max_args_overload(cmd[0], args.size(), "== 1", clr);
 
-			else if (args.size() < func.get_REPEAT_max_args())
+			else if (args.size() < max_args)
 				excp._isfct_args(args.size(), "== 1", clr);
 
 			else
@@ -571,6 +685,7 @@ int main(int argc, char *argv[])
 		else if (cmd[0] == ".exit")
 		{
 			// return back to default console color
+			shortcut.update("write");
 			cout << clr["STD"] << endl;
 			break;
 		}

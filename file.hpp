@@ -20,7 +20,7 @@ public:
 	float get_file_size(std::string path);
 
 	// writes text in a file
-	void write_file(std::string path, std::string content);
+	void write_file(std::string path, std::string content, bool clear);
 
 	void copy_file(std::string file_path, std::string targ_path);
 

@@ -6,50 +6,25 @@
 
 //program modules
 #include "cli.hpp"
+#include "utilities.hpp"
+#include "shortcut.hpp"
 
 using namespace std;
 
 vector<string> get_command()
 {
+	UTILS utils;
+
 	string cmd;
 	getline(cin, cmd);
 
-	return split_string(cmd);
+	return utils.split_string(cmd);
 }
 
-vector<string> split_string(string str)
-{
-	vector<string> split_str;
-	string aux_str = "";
-
-	for (int i = 0; i < str.size(); i++)
-	{
-		aux_str = "";
-
-		while (str[i] != ' ')
-		{
-			aux_str += str[i];
-			i++;
-
-			if (i >= str.size())
-				break;
-		}
-
-		split_str.push_back(aux_str);
-	}
-
-	if (split_str.size() < 1)
-		split_str.push_back("__NULL__");
-
-	return split_str;
-}
-
-vector<string> get_args(vector<string> cmd)
+vector<string> get_args(vector<string> cmd, map<string, string> shortcut)
 {
 	vector<string> args;
 	string full_arg = "";
-
-	bool in_quote = false;
 
 	// jump index 0 because it's a command
 	for (int o = 1; o < cmd.size(); o++)
@@ -77,9 +52,16 @@ vector<string> get_args(vector<string> cmd)
 			continue;
 		}
 
+		else if (cmd[o][0] == '$')
+		{
+			for (int i = 1; i < cmd[o].size(); i++)
+				full_arg += cmd[o][i];
+
+			args.push_back(shortcut[full_arg]);
+		}
+
 		else //if (cmd[o][cmd[o].size() - 1] != '\"')
 			args.push_back(cmd[o]);
-		
 	}
 
 	return args;
