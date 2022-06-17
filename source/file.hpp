@@ -13,9 +13,9 @@ public:
 	
 	// reads a file and return it's content
 	std::vector<std::string> read_file(std::string path);
-	std::string read_file_line(std::string path, int line);
+	std::string read_file_line(std::string path, int line, std::map<std::string, std::string> clr);
 	//std::string get_inline_commands(std::vector<std::string> targ_array)
-	int get_file_lines(std::string path);
+	int get_file_lines(std::string path, std::map<std::string, std::string> clr);
 
 	float get_file_size(std::string path);
 

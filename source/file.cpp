@@ -5,8 +5,10 @@
 #include <vector>
 #include <map>
 
-#include "file.hpp"
+#include "exceptions_msgs.hpp"
 #include "cli.hpp"
+#include "file.hpp"
+#include "cd.hpp"
 
 using namespace std;
 
@@ -53,31 +55,49 @@ vector<string> FILE_HAND::read_file(string path)
 	return buffer;
 }
 
-string FILE_HAND::read_file_line(string path, int line)
+string FILE_HAND::read_file_line(string path, int line, map<string, string> clr)
 {
+	CD cd;
+	EXCP excp;
 	string buffer;
+
+	cout << "okay" << endl;
 
 	fstream file;
 	file.open(path, ios::in);
 
-	for (int i = 1; i <= line; i++)
-		getline(file, buffer);
+	if (!cd.file_exist(path))
+		excp._file_not_found(path, clr);
+
+	else
+		for (int i = 1; i <= line; i++)
+			getline(file, buffer);
 	
 	return buffer;
 }
 
-int FILE_HAND::get_file_lines(string path)
+int FILE_HAND::get_file_lines(string path, map<string, string>clr)
 {
+	EXCP excp;
 	string buffer;
 	int lines = 0;
 
 	fstream file;
 	file.open(path, ios::in);
 
-	while (!file.eof())
+	if (file.fail())
 	{
-		lines++;
-		getline(file, buffer);
+		excp._file_not_found(path, clr);
+		return -1;
+	}
+
+	else
+	{
+		while (!file.eof())
+		{
+			lines++;
+			getline(file, buffer);
+		}
 	}
 
 	return lines;

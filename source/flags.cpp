@@ -1,5 +1,6 @@
 #include <string>
 #include <vector>
+#include <map>
 
 #include "flags.hpp"
 #include "flags_arg.hpp"

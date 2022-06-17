@@ -1,6 +1,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <iostream>
 
 #include "flags_arg.hpp"
 #include "file.hpp"
@@ -14,12 +15,12 @@ FLAG_ARG::FLAG_ARG()
 
 }
 
-vector<string> FLAG_ARG::get_rf_commands(string path, int iterator)
+vector<string> FLAG_ARG::get_rf_commands(string path, int iterator, map<string, string> clr)
 {
 	UTILS utils;
 	FILE_HAND file;
 
-	return utils.split_string(file.read_file_line(path, iterator));
+	return utils.split_string(file.read_file_line(path, iterator, clr));
 }
 
 vector<vector<string>> FLAG_ARG::get_inline_commands(vector<string> program_args)

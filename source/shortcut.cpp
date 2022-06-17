@@ -3,18 +3,35 @@
 #include <string>
 #include <map>
 
+#include "cd.hpp"
 #include "shortcut.hpp"
+#include "warning_msgs.hpp"
 #include "file.hpp"
 #include "utilities.hpp"
 
 using namespace std;
 
-SHORTCUT::SHORTCUT()
+SHORTCUT::SHORTCUT(const string app_path, map<string, string> clr)
 {
+	WARN warn;
+	CD cd;
+
 	this->max_ADD_args = 3;
 	this->max_EDIT_args = 3;
 	this->max_LIST_args = 1;
 	this->max_RMV_args = 2;
+
+	this->app_path = (app_path != "") ? app_path + "/" : "";
+
+	if (!cd.file_exist(this->app_path + "_system/shortcuts.txt"))
+	{
+		this->can_run = false;
+
+		warn._system_depedency_file_not_found("_system/shortcuts.txt", clr);
+	}
+
+	else
+		this->can_run = true;
 }
 
 bool SHORTCUT::exist(string key)
@@ -48,7 +65,7 @@ void SHORTCUT::update(string mode)
 
 	if (mode == "read")
 	{
-		vector<string> content = file.read_file("./_system/shortcuts.txt");
+		vector<string> content = file.read_file(this->app_path + "_system/shortcuts.txt");
 
 		for (string i : content)
 		{
@@ -87,14 +104,14 @@ void SHORTCUT::update(string mode)
 
 	else if (mode == "write")
 	{
-		file.write_file("_system/shortcuts.txt", "", true);
+		file.write_file(this->app_path + "_system/shortcuts.txt", "", true);
 		
 		for (auto i : this->shortcuts)
 		{
 			string buff = "__name__: " + i.first + " __path__: " + i.second;
 			cout << "called.." << endl;
 
-			file.write_file("_system/shortcuts.txt", buff, false);
+			file.write_file(this->app_path + "_system/shortcuts.txt", buff, false);
 		}
 	}
 }

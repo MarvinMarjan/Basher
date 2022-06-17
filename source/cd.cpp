@@ -1,6 +1,7 @@
 // c++ modules
 #include <dirent.h>
 #include <fstream>
+#include <map>
 #include <direct.h>
 #include <string>
 #include <iostream>

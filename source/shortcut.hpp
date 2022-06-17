@@ -1,7 +1,9 @@
+#pragma once
+
 class SHORTCUT
 {
 public:
-	SHORTCUT();
+	SHORTCUT(const std::string app_path, std::map<std::string, std::string>);
 
 	void add_shortcut(std::pair<std::string, std::string> shortcut);
 	void rmv_shortcut(std::string shortcut_name);
@@ -18,8 +20,12 @@ public:
 	int get_max_EDIT_args();
 	int get_max_LIST_args();
 
+	bool can_run;
+
 private:
 	std::map<std::string, std::string> shortcuts;
+
+	std::string app_path;
 
 	int max_ADD_args;
 	int max_RMV_args;
