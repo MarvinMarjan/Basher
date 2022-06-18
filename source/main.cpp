@@ -1,6 +1,6 @@
 // Copyright � Marvin Marjan
 
-#define _VERSION "1.0.3"
+#define _VERSION "1.0.4"
 
 // c++ modules
 #include <Windows.h>
