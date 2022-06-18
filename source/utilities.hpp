@@ -9,5 +9,6 @@ public:
 
 	std::string to_lower_case(std::string source);
 	std::string concat_string(std::vector<std::string> source);
-
+	
+	std::string remove_last_char(std::string source);
 };

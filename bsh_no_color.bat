@@ -1,1 +1,1 @@
-bsh -dc
+bsh -dc -s -c clear

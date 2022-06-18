@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
 	DIRS dirs; // DIRS instantiation: directory handling
 	FILE_HAND file; // FILE instantiation: file system handling
 	FUNC func; // FUNC instantiation: in-program-app handling
-	SHORTCUT shortcut(app_path, clr);
+	SHORTCUT shortcut(app_path, clr); // SHORTCUT instantiation: shortcut handling
 	
 	if (shortcut.can_run)
 		shortcut.update("read");

@@ -45,8 +45,6 @@ vector<string> get_args(vector<string> cmd, map<string, string> shortcut)
 
 			full_arg.erase(0, 1);
 			full_arg.erase(full_arg.size() - 1);
-			
-			//full_arg[full_arg.size() - ((full_arg[full_arg.size() - 1] == '\"') ? 1 : 2)] = (char*)"";
 
 			args.push_back(full_arg);
 			continue;
@@ -60,7 +58,13 @@ vector<string> get_args(vector<string> cmd, map<string, string> shortcut)
 			args.push_back(shortcut[full_arg]);
 		}
 
-		else //if (cmd[o][cmd[o].size() - 1] != '\"')
+		else if (cmd[o] == "+")
+		{
+			args[args.size() - 1] = args[args.size() - 1] + cmd[o + 1];
+			o++;
+		}
+
+		else
 			args.push_back(cmd[o]);
 	}
 

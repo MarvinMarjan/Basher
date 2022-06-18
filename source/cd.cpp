@@ -16,15 +16,13 @@
 using namespace std;
 
 CD::CD(string path)
-{	
+{
 	for (int i = 0; i < path.size(); i++)
-	{
 		if (path[i] == '\\')
 			path[i] = '/';
-		
-		this->path = this->format_path(path);
-		this->max_args = 1;
-	}
+	
+	this->path = path;
+	this->max_args = 1;
 }
 
 CD::CD()

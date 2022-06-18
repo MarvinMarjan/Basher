@@ -59,3 +59,10 @@ string UTILS::concat_string(vector<string> source)
 	
 	return full_str;
 }
+
+string UTILS::remove_last_char(string source)
+{
+	source.erase(source.size() - 1);
+
+	return source;
+}
