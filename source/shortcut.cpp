@@ -1,13 +1,14 @@
-#include <vector>
 #include <iostream>
 #include <string>
+#include <vector>
 #include <map>
 
-#include "cd.hpp"
-#include "shortcut.hpp"
+//#include "libs/rapidjson/include/rapidjson/document.h"
 #include "warning_msgs.hpp"
-#include "file.hpp"
 #include "utilities.hpp"
+#include "shortcut.hpp"
+#include "file.hpp"
+#include "cd.hpp"
 
 using namespace std;
 
@@ -98,18 +99,17 @@ void SHORTCUT::update(string mode)
 			this->add_shortcut({
 				data[0],
 				data[1]
-			});
+				});
 		}
 	}
 
 	else if (mode == "write")
 	{
 		file.write_file(this->app_path + "_system/shortcuts.txt", "", true);
-		
+
 		for (auto i : this->shortcuts)
 		{
 			string buff = "__name__: " + i.first + " __path__: " + i.second;
-			cout << "called.." << endl;
 
 			file.write_file(this->app_path + "_system/shortcuts.txt", buff, false);
 		}

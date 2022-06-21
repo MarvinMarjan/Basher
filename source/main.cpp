@@ -1,6 +1,6 @@
 // Copyright � Marvin Marjan
 
-#define _VERSION "1.0.4"
+#define _VERSION "1.0.5"
 
 // c++ modules
 #include <Windows.h>
@@ -710,12 +710,18 @@ int main(int argc, char *argv[])
 			}
 		}
 
+		else if (cmd[0] == "define")
+		{
+			
+		}
+
 		// quit the program
 		else if (cmd[0] == ".exit")
 		{
 			// return back to default console color
 			if (shortcut.can_run)
 				shortcut.update("write");
+
 			cout << clr["STD"] << endl;
 			break;
 		}
