@@ -1,6 +1,6 @@
 // Copyright � Marvin Marjan
 
-#define _VERSION "1.0.5"
+#define _VERSION "1.0.8"
 
 // c++ modules
 #include <Windows.h>
@@ -15,6 +15,7 @@
 
 // program modules
 #include "exceptions_msgs.hpp"
+#include "maiky_system.hpp"
 #include "warning_msgs.hpp"
 #include "flags_arg.hpp"
 #include "local_dir.hpp"
@@ -22,6 +23,7 @@
 #include "shortcut.hpp"
 #include "flags.hpp"
 #include "boot.hpp"
+#include "data.hpp"
 #include "file.hpp"
 #include "func.hpp"
 #include "path.hpp"
@@ -103,7 +105,8 @@ int main(int argc, char *argv[])
 	FILE_HAND file; // FILE instantiation: file system handling
 	FUNC func; // FUNC instantiation: in-program-app handling
 	SHORTCUT shortcut(app_path, clr); // SHORTCUT instantiation: shortcut handling
-	
+	MAIKY_SYSTEM maiky(app_path);
+
 	if (shortcut.can_run)
 		shortcut.update("read");
 
@@ -710,11 +713,34 @@ int main(int argc, char *argv[])
 			}
 		}
 
-		else if (cmd[0] == "define")
+		else if (cmd[0] == "func")
 		{
-			
+			vector<string> args = get_args(cmd, shortcut_val);
+
+			int max_ADD_args = maiky.get_ADD_MAX_ARGS();
+			int max_RMV_args = maiky.get_RMV_MAX_ARGS();
+
+			if (args[0] == "add")
+			{
+				if (args.size() > max_ADD_args)
+					excp._max_args_overload(cmd[0], args.size(), "== 3", clr);
+
+				else if (args.size() < max_ADD_args)
+					excp._isfct_args(args.size(), "== 3", clr);
+
+				else
+					maiky.add_func({ args[1], args[2] });
+			}
+
+			else if (args[0] == "rmv")
+			{
+
+			}
 		}
 
+		else if (maiky.exist(cmd[0]))
+			maiky.run_func(cmd[0], get_args(cmd, shortcut_val));
+		
 		// quit the program
 		else if (cmd[0] == ".exit")
 		{

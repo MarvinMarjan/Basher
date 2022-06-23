@@ -1,6 +1,6 @@
+#include <stdio.h>
 #include <string>
 #include <vector>
-#include <stdio.h>
 
 #include "utilities.hpp"
 

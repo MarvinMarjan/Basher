@@ -1,7 +1,8 @@
 #pragma once
 
-// splits a string each space " "
-std::vector<std::string> split_string(std::string str);
+#include <vector>
+#include <string>
+#include <map>
 
 // returns the full line
 std::vector<std::string> get_command();

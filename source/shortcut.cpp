@@ -7,6 +7,7 @@
 #include "warning_msgs.hpp"
 #include "utilities.hpp"
 #include "shortcut.hpp"
+#include "data.hpp"
 #include "file.hpp"
 #include "cd.hpp"
 
@@ -61,59 +62,19 @@ void SHORTCUT::edit_shortcut(string shortcut_name, string new_value)
 
 void SHORTCUT::update(string mode)
 {
+	DATA data(this->app_path);
 	UTILS utils;
 	FILE_HAND file;
 
 	if (mode == "read")
-	{
-		vector<string> content = file.read_file(this->app_path + "_system/shortcuts.txt");
-
-		for (string i : content)
-		{
-			// ["name", "desktop", "path", "C:/Users/Usuario/Desktop"] 
-			vector<string> split = utils.split_string(i);
-			vector<string> data;
-
-			for (int o = 0; o < split.size(); o++)
-			{
-				if (split[o] == "__name__:")
-				{
-					o++;
-
-					data.push_back(split[o]);
-				}
-
-				else if (split[o] == "__path__:")
-				{
-					o++;
-
-					vector<string> aux;
-
-					for (int p = o; p < split.size(); p++)
-						aux.push_back(split[p]);
-
-					data.push_back(utils.concat_string(aux));
-				}
-			}
-
+		for (auto itr : data.get_data(this->app_path + "_system/shortcuts.txt"))
 			this->add_shortcut({
-				data[0],
-				data[1]
+				itr.first,
+				itr.second
 				});
-		}
-	}
 
 	else if (mode == "write")
-	{
-		file.write_file(this->app_path + "_system/shortcuts.txt", "", true);
-
-		for (auto i : this->shortcuts)
-		{
-			string buff = "__name__: " + i.first + " __path__: " + i.second;
-
-			file.write_file(this->app_path + "_system/shortcuts.txt", buff, false);
-		}
-	}
+		data.set_data(this->app_path + "_system/shortcuts.txt", this->shortcuts);
 }
 
 map<string, string> SHORTCUT::get_shortcuts()

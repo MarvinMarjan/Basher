@@ -1,5 +1,8 @@
 #pragma once
 
+#include <vector>
+#include <string>
+
 namespace FLAGS
 {
 	class READ_FILE_FLAG

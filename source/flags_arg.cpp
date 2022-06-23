@@ -1,12 +1,12 @@
+#include <iostream>
 #include <string>
 #include <vector>
 #include <map>
-#include <iostream>
 
 #include "flags_arg.hpp"
+#include "utilities.hpp"
 #include "file.hpp"
 #include "cli.hpp"
-#include "utilities.hpp"
 
 using namespace std;
 

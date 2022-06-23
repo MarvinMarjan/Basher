@@ -1,13 +1,13 @@
-#include <iostream>
 #include <sys/stat.h>
+#include <iostream>
 #include <fstream>
 #include <string>
 #include <vector>
 #include <map>
 
 #include "exceptions_msgs.hpp"
-#include "cli.hpp"
 #include "file.hpp"
+#include "cli.hpp"
 #include "cd.hpp"
 
 using namespace std;

@@ -1,5 +1,9 @@
 #pragma once
 
+#include <vector>
+#include <string>
+#include <map>
+
 class EXCP
 {
 public:
@@ -14,5 +18,4 @@ public:
 	void _incompatible_flags(std::vector<std::string> imcomp_flags, std::map<std::string, std::string> clr);
 	
 	void _dir_already_exists(std::string dir_name, std::map<std::string, std::string> clr);
-	
 };

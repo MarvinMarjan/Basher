@@ -1,17 +1,16 @@
 // c++ modules
 #include <dirent.h>
-#include <fstream>
-#include <map>
-#include <direct.h>
-#include <string>
 #include <iostream>
-#include <vector>
 #include <cstring>
+#include <fstream>
+#include <string>
+#include <vector>
+#include <map>
 
 // program modules
-#include "cd.hpp"
-#include "path.hpp"
 #include "file.hpp"
+#include "path.hpp"
+#include "cd.hpp"
 
 using namespace std;
 

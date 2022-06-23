@@ -1,13 +1,13 @@
 ﻿// c++ modules
 #include <iostream>
-#include <vector>
 #include <string>
+#include <vector>
 #include <map>
 
 //program modules
-#include "cli.hpp"
 #include "utilities.hpp"
 #include "shortcut.hpp"
+#include "cli.hpp"
 
 using namespace std;
 

@@ -1,6 +1,6 @@
 // c++ modules
-#include <string>
 #include <iostream>
+#include <string>
 
 // program modules
 #include "path.hpp"
