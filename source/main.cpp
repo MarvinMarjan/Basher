@@ -1,6 +1,6 @@
 // Copyright � Marvin Marjan
 
-#define _VERSION "1.0.8"
+#define _VERSION "1.0.9"
 
 // c++ modules
 #include <Windows.h>
@@ -729,17 +729,44 @@ int main(int argc, char *argv[])
 					excp._isfct_args(args.size(), "== 3", clr);
 
 				else
-					maiky.add_func({ args[1], args[2] });
+				{
+					if (cd.file_exist(args[2]))
+						maiky.add_func({ args[1], args[2] });
+
+					else
+						excp._path_not_found(args[2], clr);
+				}
 			}
 
 			else if (args[0] == "rmv")
 			{
+				if (args.size() > max_RMV_args)
+					excp._max_args_overload(cmd[0], args.size(), "== 2", clr);
 
+				else if (args.size() < max_RMV_args)
+					excp._isfct_args(args.size(), "== 2", clr);
+
+				else
+					maiky.rmv_func(args[1]);
 			}
+
+			else if (args[0] == "list")
+			{
+				if (args.size() > 1)
+					excp._max_args_overload(cmd[0], args.size(), "== 1", clr);
+
+				else
+					for (auto itr : maiky.get_all_funcs())
+						cout << clr["YELLOW"] << itr.first << ": " << clr["GREEN"] << itr.second << clr["STD"] << endl;
+
+				cout << endl;
+			}
+
+			maiky.update();
 		}
 
 		else if (maiky.exist(cmd[0]))
-			maiky.run_func(cmd[0], get_args(cmd, shortcut_val));
+			maiky.run_func(cmd[0], get_args(cmd, shortcut_val), clr);
 		
 		// quit the program
 		else if (cmd[0] == ".exit")

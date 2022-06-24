@@ -3,14 +3,17 @@
 #include <vector>
 #include <map>
 
+#include "exceptions_msgs.hpp"
 #include "maiky_system.hpp"
 #include "utilities.hpp"
 #include "data.hpp"
 #include "file.hpp"
+#include "cd.hpp"
 
 using namespace std;
 
-MAIKY_SYSTEM::~MAIKY_SYSTEM()
+// write update
+void MAIKY_SYSTEM::update()
 {
 	DATA data(this->app_path);
 
@@ -35,6 +38,11 @@ MAIKY_SYSTEM::MAIKY_SYSTEM(string app_path)
 		});
 }
 
+map<string, string> MAIKY_SYSTEM::get_all_funcs()
+{
+	return this->funcs;
+}
+
 map<string, string>::iterator MAIKY_SYSTEM::get_func_itr(string func_name)
 {
 	return this->funcs.find(func_name);
@@ -50,17 +58,22 @@ void MAIKY_SYSTEM::rmv_func(string func_name)
 	this->funcs.erase(func_name);
 }
 
-void MAIKY_SYSTEM::run_func(string func_name, vector<string> args)
+void MAIKY_SYSTEM::run_func(string func_name, vector<string> args, map<string, string> clr)
 {
 	UTILS utils;
+	EXCP excp;
+	CD file;
 
 	map<string, string>::iterator itr = this->get_func_itr(func_name);
 
 	string path = SRC_PATH;
-
 	path += " " + itr->second + " " + utils.concat_string(args);
 
-	system(path.c_str());
+	if (file.file_exist(itr->second))
+		system(path.c_str());
+
+	else
+		excp._path_not_found(itr->second, clr);
 }
 
 bool MAIKY_SYSTEM::exist(string func_name)
