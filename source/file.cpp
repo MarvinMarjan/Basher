@@ -18,7 +18,7 @@ FILE_HAND::FILE_HAND()
 	this->max_RM_FILE_args = 1;
 	this->max_READ_FILE_args = 1;
 	this->max_WRITE_FILE_args = 2;
-	this->max_COPY_FILE_args = 2;
+	this->max_COPY_FILE_args = 3;
 }
 
 void FILE_HAND::m_file(string path)

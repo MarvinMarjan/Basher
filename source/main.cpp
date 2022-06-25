@@ -1,6 +1,6 @@
 // Copyright � Marvin Marjan
 
-#define _VERSION "0.0.9 - (BETA)"
+#define _VERSION "0.1.0 - (BETA)"
 
 // c++ modules
 #include <Windows.h>
@@ -309,7 +309,7 @@ int main(int argc, char *argv[])
 				vector<string> cmd_flags = get_cmd_flags(args);
 				map<string, bool> cmd_modes = set_cmd_modes(cmd_flags);
 
-				vector<vector<string>> dir_list = dirs.get_dir_list(path.get_path(), cmd_modes["details_mode"], cmd_modes["debug_path_mode"], clr);
+				vector<vector<string>> dir_list = dirs.get_dir_list(path.get_path(), cmd_modes["details_mode"], true, cmd_modes["debug_path_mode"], clr);
 
 				/*
 				dir_list = [
@@ -392,15 +392,37 @@ int main(int argc, char *argv[])
 			int max_args = dirs.get_max_RM_DIR_args();
 
 			if (args.size() > max_args)
-				excp._max_args_overload(cmd[0], args.size(), "== 1", clr);
+				excp._max_args_overload(cmd[0], args.size(), "<= 2", clr);
 
-			else if (args.size() < max_args)
-				excp._isfct_args(args.size(), "== 1", clr);
+			else if (args.size() < max_args - 1)
+				excp._isfct_args(args.size(), "<= 2", clr);
 
 			else
 			{
 				if (cd.path_exist(PATH::check(args[0], path.get_path())))
-					dirs.rm_dir(PATH::check(args[0], path.get_path()));
+				{
+					vector<vector<string>> d_list = dirs.get_dir_list(args[0]);
+
+					if (!d_list.size())
+						dirs.rm_dir(PATH::check(args[0], path.get_path()));
+
+					else
+					{
+						vector<string> cmd_flags = get_cmd_flags(args);
+						map<string, bool> cmd_modes = set_cmd_modes(cmd_flags);
+
+						warn._not_empty_dir(args[0], clr);
+						string inp;
+
+						cout << "would you like to delete it anyway? Y/N: ";
+						getline(cin, inp);
+
+						inp = utils.to_lower_case(inp);
+
+						if (inp == "y" || inp == "yes")
+							dirs.rm_all_dir(args[0], cmd_modes["debug_path_mode"], clr);
+					}
+				}
 
 				else
 					excp._path_not_found(args[0], clr);
@@ -435,9 +457,9 @@ int main(int argc, char *argv[])
 					if (input == "y" || input == "yes")
 						file.m_file(cd.format_path(path.get_path()) + args[0]);
 
-					else
+					else if (input == "n" || input == "no")
 					{
-						vector<vector<string>> buf_list = dirs.get_dir_list(path.get_path(), false, false, clr);
+						vector<vector<string>> buf_list = dirs.get_dir_list(path.get_path(), false, true, false, clr);
 
 						string file_i_name;
 						int file_i = 1;
@@ -544,23 +566,44 @@ int main(int argc, char *argv[])
 			if (args.size() > max_args)
 				excp._max_args_overload(cmd[0], args.size(), "== 2", clr);
 
-			else if (args.size() < max_args)
+			else if (args.size() < max_args - 1)
 				excp._isfct_args(args.size(), "== 2", clr);
 
 			else
 			{
-				if (cd.file_exist(PATH::check(args[0], path.get_path())))
+				if (dirs.get_buf_type(PATH::check(args[0], path.get_path())) == "FILE")
 				{
-					if (cd.path_exist(PATH::check(args[1], path.get_path())))
-						file.copy_file(PATH::check(args[0], path.get_path()), cd.format_path(args[1]) + args[0]);
+					if (cd.file_exist(PATH::check(args[0], path.get_path())))
+					{
+						if (cd.path_exist(PATH::check(args[1], path.get_path())))
+							file.copy_file(PATH::check(args[0], path.get_path()), cd.format_path(args[1]) + args[0]);
+
+						else
+							excp._path_not_found(args[1], clr);
+					}
+
 
 					else
-						excp._path_not_found(args[1], clr);
+						excp._file_not_found(args[0], clr);
 				}
-				
 
 				else
-					excp._file_not_found(args[0], clr);
+				{
+					vector<string> cmd_flags = get_cmd_flags(args);
+					map<string, bool> cmd_modes = set_cmd_modes(cmd_flags);
+
+					if (cd.path_exist(PATH::check(args[0], path.get_path())))
+					{
+						if (cd.path_exist(PATH::check(args[1], path.get_path())))
+							dirs.copy_dir(PATH::check(args[0], path.get_path()), cd.format_path(args[1]) + args[0], cmd_modes["debug_path_mode"], clr);
+
+						else
+							excp._path_not_found(args[1], clr);
+					}
+
+					else
+						excp._path_not_found(args[0], clr);
+				}
 			}
 		}
 

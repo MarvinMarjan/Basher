@@ -33,3 +33,9 @@ void WARN::_command_disabled(string cmd_name, string reason, map<string, string>
 		<< clr["STD"] << "has been disabled\n" << clr["YELLOW"] << "reason: " << '\"' << reason << '\"'
 		<< clr["STD"] << endl << endl;
 }
+
+void WARN::_not_empty_dir(string d_name, map<string, string> clr)
+{
+	cout << clr["BLUE"] << "WARNING: " << clr["STD"] << "the directory: " << clr["GREEN"] << '\"' << d_name << '\"'
+		<< clr["STD"] << " isn't empty" << clr["STD"] << endl << endl;
+}
