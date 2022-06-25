@@ -1,1 +1,0 @@
-__name__: desktop __path__: C:/Users/Usuario/Desktop

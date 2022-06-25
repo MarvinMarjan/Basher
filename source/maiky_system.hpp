@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#define SRC_PATH "Maiky\\maik.exe"
+#define SRC_PATH "source\\Maiky\\maik.exe"
 
 class MAIKY_SYSTEM
 {

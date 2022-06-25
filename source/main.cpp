@@ -1,6 +1,6 @@
-// Copyright � Marvin Marjan
+// Copyright   Marvin Marjan
 
-#define _VERSION "0.1.0 - (BETA)"
+#define _VERSION "0.0.10.1 - (BETA)"
 
 // c++ modules
 #include <Windows.h>
@@ -72,6 +72,8 @@ void signal_handling(int signum)
 // main process
 int main(int argc, char *argv[])
 {
+	system("color");
+
 	UTILS utils; // some util stuff
 	BOOT boot; // BOOT instantiation: takes care of startup processes
 
