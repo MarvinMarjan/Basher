@@ -1,4 +1,4 @@
-// Copyright   Marvin Marjan
+// Copyright � Marvin Marjan
 
 #define _VERSION "0.0.10.1 - (BETA)"
 
@@ -156,6 +156,7 @@ int main(int argc, char *argv[])
 
 		// path text
 		cout << path.get_path() << clr["GREEN"] << " $ " << clr["STD"];
+		system("color");
 
 		// contains the std::input of user, but splited in a array
 		vector<string> cmd = ((read_file_mode) ? flags_args.get_rf_commands(program_args[rf_flag.rf_index], rf_flag.iterator, clr) :
