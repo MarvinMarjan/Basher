@@ -48,12 +48,15 @@ void CD::cd_dir(string path)
 
 void CD::cd_b_dir()
 {
-	for (int i = this->path.size() - 1; i >= 0; i--)
+	if (this->path != "C:/")
 	{
-		if (this->path[i] == '/')
+		for (int i = this->path.size() - 1; i >= 0; i--)
 		{
-			this->path = this->path.substr(0, i);
-			break;
+			if (this->path[i] == '/')
+			{
+				this->path = this->path.substr(0, i);
+				break;
+			}
 		}
 	}
 }

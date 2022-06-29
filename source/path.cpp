@@ -45,11 +45,14 @@ bool PATH::is_same_path(string path)
 
 	for (int i = 0; i < path.size(); i++)
 	{
-		if (i + 1 < path.size() && (path[i] == '/' || path[i] == '\\' || path[i] == '.'))
-			same = true;
+		if (i + 1 < path.size())
+		{
+			if (path[i] == '/' || path[i] == '\\' || path[i] == '.')
+				same = true;
 
-		else
-			same = false;
+			else
+				same = false;
+		}
 	}
 
 	return same;

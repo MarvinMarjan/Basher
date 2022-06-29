@@ -1,6 +1,6 @@
 // Copyright � Marvin Marjan
 
-#define _VERSION "0.0.10.1 - (BETA)"
+#define _VERSION "0.0.11 - (BETA)"
 
 // c++ modules
 #include <Windows.h>
@@ -215,8 +215,8 @@ int main(int argc, char *argv[])
 			cout << clr["YELLOW"] << "mdir" << clr["STD"] << " - " << "create a directory" << endl
 				<< "\t\tsyntax: " << clr["YELLOW"] << "mdir" << clr["CYAN"] << " [ dir_name ]" << clr["STD"] << endl << endl;
 
-			cout << clr["YELLOW"] << "mdir" << clr["STD"] << " - " << "remove a directory" << endl
-				<< "\t\tsyntax: " << clr["YELLOW"] << "rmdir" << clr["CYAN"] << " [ dir_name ]" << clr["STD"] << endl << endl;
+			cout << clr["YELLOW"] << "rmdir" << clr["STD"] << " - " << "remove a directory" << endl
+				<< "\t\tsyntax: " << clr["YELLOW"] << "rmdir" << clr["CYAN"] << " [ -path_debug (-p) ? ] [ dir_name ]" << clr["STD"] << endl << endl;
 
 			cout << clr["YELLOW"] << "mfile" << clr["STD"] << " - " << "create a file" << endl
 				<< "\t\tsyntax: " << clr["YELLOW"] << "mfile" << clr["CYAN"] << " [ file_name ]" << clr["STD"] << endl << endl;
@@ -231,7 +231,7 @@ int main(int argc, char *argv[])
 				<< "\t\tsyntax: " << clr["YELLOW"] << "read" << clr["CYAN"] << " [ file_name ]" << clr["STD"] << endl << endl;
 
 			cout << clr["YELLOW"] << "copy" << clr["STD"] << " - " << "copy a file to another path" << endl
-				<< "\t\tsyntax: " << clr["YELLOW"] << "copy" << clr["CYAN"] << " [ file_to_copy_name ] [ target_path ]" << clr["STD"] << endl << endl;
+				<< "\t\tsyntax: " << clr["YELLOW"] << "copy" << clr["CYAN"] << " [ -path_debug (-p) ? ] [ file_to_copy_name ] [ target_path ]" << clr["STD"] << endl << endl;
 
 			cout << clr["YELLOW"] << "sys" << clr["STD"] << " - " << "execute an operating system command" << endl
 				<< "\t\tsyntax: " << clr["YELLOW"] << "sys" << clr["CYAN"] << " \"[ command ]\"" << clr["STD"] << endl << endl;
@@ -241,6 +241,11 @@ int main(int argc, char *argv[])
 									 clr["YELLOW"] << "\t\t\tshortcut" << clr["CYAN"] << " [ rmv (remove) ] [ shortcut_name ]" << endl <<
 				                     clr["YELLOW"] << "\t\t\tshortcut" << clr["CYAN"] << " [ edit ] [ shortcut_name ] [ new_shortcut_path ]" << endl <<
 									 clr["YELLOW"] << "\t\t\tshortcut" << clr["CYAN"] << " [ list ] " << clr["STD"] << clr["STD"] << endl << endl;
+
+			cout << clr["YELLOW"] << "func" << clr["STD"] << " - " << "create functions write in Maiky" << endl
+				<< "\t\tsyntax: " << clr["YELLOW"] << "func" << clr["CYAN"] << " [ add ] [ func_name ] [ func_source_path ]" << clr["STD"] << endl <<
+				clr["YELLOW"] << "\t\t\func" << clr["CYAN"] << " [ rmv (remove) ] [ func_name ]" << endl <<
+				clr["YELLOW"] << "\t\t\func" << clr["CYAN"] << " [ list ] " << clr["STD"] << clr["STD"] << endl << endl;
 
 			cout << clr["YELLOW"] << "repeat" << clr["STD"] << " - " << "repeats a block of code a number of times. (use \".run\" to run de block of code)" << endl
 				<< "\t\tsyntax: " << clr["YELLOW"] << "repeat" << clr["CYAN"] << " [ times ]" << clr["STD"] << endl << endl;
